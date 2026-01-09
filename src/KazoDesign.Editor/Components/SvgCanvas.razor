@@ -70,6 +70,8 @@
     private double _dragStartY;
     private double _elementStartX;
     private double _elementStartY;
+    private double _lineEndOffsetX;  // Offset from line start to end point
+    private double _lineEndOffsetY;
     
     private double _zoom = 1.0;
     private double _panX = 0;
@@ -127,6 +129,13 @@
             _dragStartY = y;
             _elementStartX = clickedElement.X;
             _elementStartY = clickedElement.Y;
+            
+            // Store line end offset for proper line movement
+            if (clickedElement is KLine line)
+            {
+                _lineEndOffsetX = line.X2 - line.X;
+                _lineEndOffsetY = line.Y2 - line.Y;
+            }
         }
     }
     
@@ -141,13 +150,11 @@
             SelectedElement.X = _elementStartX + dx;
             SelectedElement.Y = _elementStartY + dy;
             
-            // For lines, also move the end point
+            // For lines, move the end point by applying the stored offset
             if (SelectedElement is KLine line)
             {
-                var lineStartX2 = line.X2 - (_elementStartX - line.X);
-                line.X2 = SelectedElement.X + (lineStartX2 - _elementStartX);
-                var lineStartY2 = line.Y2 - (_elementStartY - line.Y);
-                line.Y2 = SelectedElement.Y + (lineStartY2 - _elementStartY);
+                line.X2 = SelectedElement.X + _lineEndOffsetX;
+                line.Y2 = SelectedElement.Y + _lineEndOffsetY;
             }
             
             DesignService.NotifyStateChanged();
