@@ -1,0 +1,17 @@
+@using KazoDesign.Editor.Models
+
+<line x1="@Shape.X.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
+      y1="@Shape.Y.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+      x2="@Shape.X2.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
+      y2="@Shape.Y2.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+      stroke="@(Shape.IsSelected ? "#00d4ff" : Shape.Stroke)"
+      stroke-width="@((Shape.IsSelected ? Shape.StrokeWidth + 1 : Shape.StrokeWidth).ToString(System.Globalization.CultureInfo.InvariantCulture))"
+      stroke-dasharray="@Shape.StrokeDashArray"
+      transform="@Shape.GetTransform()"
+      class="design-element @(Shape.IsSelected ? "selected" : "")"
+      data-id="@Shape.Id" />
+
+@code {
+    [Parameter, EditorRequired]
+    public KLine Shape { get; set; } = default!;
+}

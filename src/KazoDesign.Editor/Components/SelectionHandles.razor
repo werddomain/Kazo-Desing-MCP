@@ -1,0 +1,49 @@
+@using KazoDesign.Editor.Models
+
+@{
+    var bounds = GetElementBounds();
+}
+
+<!-- Selection rectangle -->
+<rect x="@((bounds.x - 4).ToString(System.Globalization.CultureInfo.InvariantCulture))" 
+      y="@((bounds.y - 4).ToString(System.Globalization.CultureInfo.InvariantCulture))"
+      width="@((bounds.width + 8).ToString(System.Globalization.CultureInfo.InvariantCulture))" 
+      height="@((bounds.height + 8).ToString(System.Globalization.CultureInfo.InvariantCulture))"
+      fill="none"
+      stroke="#00d4ff"
+      stroke-width="1"
+      stroke-dasharray="4,2"
+      pointer-events="none" />
+
+<!-- Corner handles -->
+<circle cx="@((bounds.x - 4).ToString(System.Globalization.CultureInfo.InvariantCulture))" 
+        cy="@((bounds.y - 4).ToString(System.Globalization.CultureInfo.InvariantCulture))" 
+        r="4" fill="#00d4ff" class="handle" />
+<circle cx="@((bounds.x + bounds.width + 4).ToString(System.Globalization.CultureInfo.InvariantCulture))" 
+        cy="@((bounds.y - 4).ToString(System.Globalization.CultureInfo.InvariantCulture))" 
+        r="4" fill="#00d4ff" class="handle" />
+<circle cx="@((bounds.x - 4).ToString(System.Globalization.CultureInfo.InvariantCulture))" 
+        cy="@((bounds.y + bounds.height + 4).ToString(System.Globalization.CultureInfo.InvariantCulture))" 
+        r="4" fill="#00d4ff" class="handle" />
+<circle cx="@((bounds.x + bounds.width + 4).ToString(System.Globalization.CultureInfo.InvariantCulture))" 
+        cy="@((bounds.y + bounds.height + 4).ToString(System.Globalization.CultureInfo.InvariantCulture))" 
+        r="4" fill="#00d4ff" class="handle" />
+
+@code {
+    [Parameter, EditorRequired]
+    public DesignElement Element { get; set; } = default!;
+    
+    private (double x, double y, double width, double height) GetElementBounds()
+    {
+        return Element switch
+        {
+            KRectangle rect => (rect.X, rect.Y, rect.Width, rect.Height),
+            KCircle circle => (circle.X - circle.Radius, circle.Y - circle.Radius, circle.Radius * 2, circle.Radius * 2),
+            KLine line => (Math.Min(line.X, line.X2), Math.Min(line.Y, line.Y2), 
+                          Math.Abs(line.X2 - line.X), Math.Abs(line.Y2 - line.Y)),
+            KText text => (text.X, text.Y - text.FontSize, text.Content.Length * text.FontSize * 0.6, text.FontSize * 1.2),
+            KImage image => (image.X, image.Y, image.Width, image.Height),
+            _ => (Element.X, Element.Y, 50, 50)
+        };
+    }
+}

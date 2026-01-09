@@ -1,0 +1,16 @@
+@using KazoDesign.Editor.Models
+
+<text x="@Shape.X.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
+      y="@Shape.Y.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+      font-size="@Shape.FontSize.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+      font-family="@Shape.FontFamily"
+      font-weight="@Shape.FontWeight"
+      fill="@(Shape.IsSelected ? "#00d4ff" : Shape.Fill)"
+      transform="@Shape.GetTransform()"
+      class="design-element @(Shape.IsSelected ? "selected" : "")"
+      data-id="@Shape.Id">@Shape.Content</text>
+
+@code {
+    [Parameter, EditorRequired]
+    public KText Shape { get; set; } = default!;
+}
