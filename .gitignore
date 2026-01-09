@@ -52,3 +52,9 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+# Node.js / VS Code Extension
+node_modules/
+out/
+*.vsix
+.vscode-test/
