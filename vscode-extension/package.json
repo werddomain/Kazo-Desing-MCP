@@ -1,7 +1,7 @@
 {
   "name": "kazo-design-mcp",
   "displayName": "Kazo Design MCP",
-  "description": "AI-assisted vector diagram editor for VS Code",
+  "description": "Communicate your design intentions to AI assistants with quick sketches and mockups",
   "version": "0.1.0",
   "publisher": "werddomain",
   "engines": {

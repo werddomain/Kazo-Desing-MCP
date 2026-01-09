@@ -1,36 +1,55 @@
 # Kazo Design MCP
 
+![Kazo Design MCP Logo](Kazo_Desing_MCP_LOGO.png)
+
 [![VS Code Extension](https://img.shields.io/badge/VS%20Code-Extension-blue?logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=werddomain.kazo-design-mcp)
 [![License](https://img.shields.io/badge/License-BSD%202--Clause-green.svg)](LICENSE)
 [![.NET](https://img.shields.io/badge/.NET-10.0-purple?logo=dotnet)](https://dotnet.microsoft.com/)
 [![Blazor](https://img.shields.io/badge/Blazor-WebAssembly-blueviolet?logo=blazor)](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor)
 
-An AI-assisted vector diagram editor for Visual Studio Code. Powered by a high-performance C# rendering engine (.NET 10 Blazor WebAssembly), it enables AI-assisted generation of SVG diagrams that are user-editable and automatically saved as rich technical documentation (Markdown + JSON).
+A Visual Studio Code extension that helps you communicate your design intentions to AI assistants like GitHub Copilot. Create quick sketches, mockups, or wireframes to visually express what you want the AI to build. Powered by a high-performance C# rendering engine (.NET 10 Blazor WebAssembly).
 
 ![Editor Overview](screenshots/editor-overview.svg)
 
+## Workflow
+
+When working with an AI assistant (like GitHub Copilot), use Kazo Design MCP to better communicate your vision:
+
+1. **Request**: Ask the AI to create something (e.g., a web page, a component, a UI layout)
+2. **Sketch**: The AI invites you to create a visual sketch of what you have in mind
+3. **Draw**: Open the SVG editor and draw your idea using simple shapes
+4. **Confirm**: Click the "Confirm & Return to AI" button when your sketch is ready
+5. **Save** (Optional): Choose to save your sketch with a custom name and location
+6. **Generate**: The AI uses your sketch to better understand and implement your request
+
 ## Features
 
-### 🎨 Vector Diagram Editor
-Create and edit professional SVG-based diagrams directly within VS Code. The editor provides a modern, responsive interface with real-time rendering.
+### 🎨 Quick Sketch Editor
+Create rapid mockups and wireframes directly within VS Code. The editor provides a simple, intuitive interface for expressing your design ideas to AI assistants.
 
-### 🧠 AI-Assisted Design (MCP)
-Leverage AI capabilities to generate diagrams from natural language descriptions. The Model Context Protocol (MCP) integration allows seamless communication between your AI assistant and the editor.
+### 🧠 AI Communication Tool (MCP)
+The Model Context Protocol (MCP) integration enables seamless communication between you and your AI assistant. Your sketches become visual context that helps the AI understand exactly what you want.
 
 ### 🔧 Shape Tools
-- **Rectangle**: Create rectangular shapes with customizable dimensions
-- **Circle**: Add circles with adjustable radius
-- **Line**: Draw connecting lines between elements
-- **Text**: Insert text labels with font customization
+- **Rectangle**: Create boxes for layouts, containers, or buttons
+- **Circle**: Add circular elements for icons, avatars, or decorations
+- **Line**: Draw connections, separators, or pointing elements
+- **Text**: Add labels to explain different parts of your sketch
 
 ![Toolbar](screenshots/toolbar.svg)
+
+### ✅ Confirm & Return
+When your sketch is ready:
+- Click the "Confirm & Return to AI" button
+- Optionally save your sketch to a file
+- The AI receives your visual context and can proceed with your request
 
 ### 💾 Smart Export Format
 When saving a design, two files are created automatically:
 - **SVG file**: The vector image for use in documentation, websites, or further editing
 - **Markdown file**: Companion documentation containing:
   - Title and preview image
-  - Original AI prompt (if AI-generated)
+  - Original prompt or description
   - Technical data in JSON format for version control and future editing
 
 ![Export Format](screenshots/export-format.svg)

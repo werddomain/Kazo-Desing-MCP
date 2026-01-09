@@ -4,6 +4,15 @@
 @inject IJSRuntime JS
 
 <div class="toolbar">
+    <div class="toolbar-group confirm-group">
+        <button class="toolbar-btn confirm-btn" @onclick="ConfirmAndReturn" title="Confirm & Return to AI">
+            <svg viewBox="0 0 24 24" width="20" height="20">
+                <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="btn-text">Confirm & Return to AI</span>
+        </button>
+    </div>
+
     <div class="toolbar-group">
         <span class="toolbar-title">Tools</span>
         <button class="toolbar-btn" @onclick="AddRectangle" title="Add Rectangle">
@@ -70,6 +79,12 @@
 </div>
 
 @code {
+    private async Task ConfirmAndReturn()
+    {
+        var result = DesignService.ExportDesignSync();
+        await JS.InvokeVoidAsync("kazoDesign.confirmAndReturn", result.Svg, result.Json, result.Title);
+    }
+    
     private void AddRectangle()
     {
         var rect = new KRectangle

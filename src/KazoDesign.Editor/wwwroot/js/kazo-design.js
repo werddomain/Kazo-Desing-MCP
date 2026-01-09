@@ -40,6 +40,14 @@ window.kazoDesign = {
         return null;
     },
 
+    // Confirm sketch and return to AI assistant
+    confirmAndReturn: function(svg, json, title) {
+        window.kazoDesign.postMessage({
+            type: 'confirmSketch',
+            data: { svg, json, title }
+        });
+    },
+
     // Download SVG as file (browser mode only)
     downloadSvg: function(svgContent, filename) {
         // In VS Code, send to extension instead

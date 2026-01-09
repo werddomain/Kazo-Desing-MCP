@@ -41,6 +41,15 @@ interface ExportResultMessage extends BlazorMessage {
     };
 }
 
+interface ConfirmSketchMessage extends BlazorMessage {
+    type: 'confirmSketch';
+    data: {
+        svg: string;
+        json: string;
+        title: string;
+    };
+}
+
 /**
  * Provider for the Kazo Design editor webview
  */
@@ -133,6 +142,10 @@ export class KazoDesignEditorProvider {
 
             case 'exportResult':
                 await this.handleExportResult(message as ExportResultMessage);
+                break;
+
+            case 'confirmSketch':
+                await this.handleConfirmSketch(message as ConfirmSketchMessage);
                 break;
 
             case 'ready':
@@ -251,6 +264,67 @@ export class KazoDesignEditorProvider {
     private async handleExportResult(message: ExportResultMessage): Promise<void> {
         // This can be used for additional processing after export
         console.log('Export result received:', message.data.title);
+    }
+
+    /**
+     * Handles confirm sketch and return to AI assistant
+     */
+    private async handleConfirmSketch(message: ConfirmSketchMessage): Promise<void> {
+        const { svg, json, title } = message.data;
+
+        // Ask user if they want to save the sketch
+        const saveChoice = await vscode.window.showQuickPick(
+            ['Save sketch and return', 'Return without saving'],
+            {
+                title: 'Save your sketch?',
+                placeHolder: 'Would you like to save your sketch before returning to the AI assistant?'
+            }
+        );
+
+        if (saveChoice === 'Save sketch and return') {
+            // Ask user for save location
+            const saveUri = await vscode.window.showSaveDialog({
+                defaultUri: vscode.Uri.file(title || 'sketch'),
+                filters: {
+                    'SVG Files': ['svg'],
+                    'All Files': ['*']
+                },
+                title: 'Save Sketch'
+            });
+
+            if (saveUri) {
+                try {
+                    const basePath = saveUri.fsPath.replace(/\.svg$/, '');
+                    const svgPath = `${basePath}.svg`;
+                    const mdPath = `${basePath}.md`;
+
+                    // Ensure directory exists
+                    const dir = path.dirname(svgPath);
+                    if (!fs.existsSync(dir)) {
+                        fs.mkdirSync(dir, { recursive: true });
+                    }
+
+                    // Save SVG file
+                    fs.writeFileSync(svgPath, svg, 'utf-8');
+
+                    // Create and save companion markdown file
+                    const markdownContent = this.createMarkdownContent(title, svgPath, undefined, json);
+                    fs.writeFileSync(mdPath, markdownContent, 'utf-8');
+
+                    vscode.window.showInformationMessage(`Sketch saved to ${basePath}`);
+                } catch (error) {
+                    vscode.window.showErrorMessage(`Failed to save sketch: ${error}`);
+                }
+            }
+        }
+
+        // Close the editor panel
+        if (this.panel) {
+            this.panel.dispose();
+        }
+
+        // Show confirmation message
+        vscode.window.showInformationMessage('Sketch confirmed! You can now continue your conversation with the AI assistant.');
     }
 
     /**
