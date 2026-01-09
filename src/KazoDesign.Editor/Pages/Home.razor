@@ -1,0 +1,29 @@
+@page "/"
+@using KazoDesign.Editor.Services
+@inject DesignService DesignService
+@inject IJSRuntime JS
+@implements IDisposable
+
+<PageTitle>Kazo Design Editor</PageTitle>
+
+<div class="editor-layout">
+    <Toolbar />
+    <SvgCanvas />
+</div>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Initialize JS interop
+            var dotNetRef = DotNetObjectReference.Create(DesignService);
+            await JS.InvokeVoidAsync("kazoDesign.initialize", dotNetRef);
+        }
+    }
+    
+    public void Dispose()
+    {
+        // Cleanup if needed
+    }
+}

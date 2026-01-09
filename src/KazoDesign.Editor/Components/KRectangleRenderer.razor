@@ -1,0 +1,19 @@
+@using KazoDesign.Editor.Models
+
+<rect x="@Shape.X.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
+      y="@Shape.Y.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+      width="@Shape.Width.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
+      height="@Shape.Height.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+      rx="@Shape.CornerRadius.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+      ry="@Shape.CornerRadius.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+      fill="@Shape.Fill" 
+      stroke="@(Shape.IsSelected ? "#00d4ff" : Shape.Stroke)"
+      stroke-width="@((Shape.IsSelected ? Shape.StrokeWidth + 1 : Shape.StrokeWidth).ToString(System.Globalization.CultureInfo.InvariantCulture))"
+      transform="@Shape.GetTransform()"
+      class="design-element @(Shape.IsSelected ? "selected" : "")"
+      data-id="@Shape.Id" />
+
+@code {
+    [Parameter, EditorRequired]
+    public KRectangle Shape { get; set; } = default!;
+}

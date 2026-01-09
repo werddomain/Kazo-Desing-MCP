@@ -1,0 +1,190 @@
+@using KazoDesign.Editor.Models
+@using KazoDesign.Editor.Services
+@inject DesignService DesignService
+@inject IJSRuntime JS
+
+<div class="canvas-container" @ref="_containerRef">
+    <svg @ref="_svgRef"
+         class="design-canvas"
+         viewBox="@ViewBox"
+         @onmousedown="OnMouseDown"
+         @onmousemove="OnMouseMove"
+         @onmouseup="OnMouseUp"
+         @onmouseleave="OnMouseUp"
+         @onwheel="OnWheel">
+        
+        <!-- Background -->
+        <rect x="0" y="0" 
+              width="@Document.CanvasWidth.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
+              height="@Document.CanvasHeight.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
+              fill="@Document.BackgroundColor" />
+        
+        <!-- Grid Pattern -->
+        <defs>
+            <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#333" stroke-width="0.5"/>
+            </pattern>
+        </defs>
+        <rect x="0" y="0" 
+              width="@Document.CanvasWidth.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
+              height="@Document.CanvasHeight.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
+              fill="url(#grid)" />
+        
+        <!-- Render all elements -->
+        @foreach (var element in Document.Elements)
+        {
+            @switch (element)
+            {
+                case KRectangle rect:
+                    <KRectangleRenderer Shape="@rect" />
+                    break;
+                case KCircle circle:
+                    <KCircleRenderer Shape="@circle" />
+                    break;
+                case KLine line:
+                    <KLineRenderer Shape="@line" />
+                    break;
+                case KText text:
+                    <KTextRenderer Shape="@text" />
+                    break;
+                case KImage image:
+                    <KImageRenderer Shape="@image" />
+                    break;
+            }
+        }
+        
+        <!-- Selection handles for selected element -->
+        @if (SelectedElement != null)
+        {
+            <SelectionHandles Element="@SelectedElement" />
+        }
+    </svg>
+</div>
+
+@code {
+    private ElementReference _svgRef;
+    private ElementReference _containerRef;
+    
+    private bool _isDragging;
+    private double _dragStartX;
+    private double _dragStartY;
+    private double _elementStartX;
+    private double _elementStartY;
+    private double _lineEndOffsetX;  // Offset from line start to end point
+    private double _lineEndOffsetY;
+    
+    private double _zoom = 1.0;
+    private double _panX = 0;
+    private double _panY = 0;
+    
+    public DesignDocument Document => DesignService.Document;
+    public DesignElement? SelectedElement => DesignService.SelectedElement;
+    
+    private string ViewBox => $"{_panX} {_panY} {Document.CanvasWidth / _zoom} {Document.CanvasHeight / _zoom}";
+    
+    protected override void OnInitialized()
+    {
+        DesignService.OnChange += StateHasChanged;
+    }
+    
+    public void Dispose()
+    {
+        DesignService.OnChange -= StateHasChanged;
+    }
+    
+    private async Task<(double x, double y)> GetSvgPoint(MouseEventArgs e)
+    {
+        try
+        {
+            var result = await JS.InvokeAsync<double[]>("kazoDesign.getSvgPoint", _svgRef, e.ClientX, e.ClientY);
+            return (result[0], result[1]);
+        }
+        catch
+        {
+            return (e.ClientX, e.ClientY);
+        }
+    }
+    
+    private async Task OnMouseDown(MouseEventArgs e)
+    {
+        var (x, y) = await GetSvgPoint(e);
+        
+        // Find element under cursor (reverse order for z-index)
+        DesignElement? clickedElement = null;
+        for (int i = Document.Elements.Count - 1; i >= 0; i--)
+        {
+            if (Document.Elements[i].ContainsPoint(x, y))
+            {
+                clickedElement = Document.Elements[i];
+                break;
+            }
+        }
+        
+        DesignService.SelectElement(clickedElement);
+        
+        if (clickedElement != null)
+        {
+            _isDragging = true;
+            _dragStartX = x;
+            _dragStartY = y;
+            _elementStartX = clickedElement.X;
+            _elementStartY = clickedElement.Y;
+            
+            // Store line end offset for proper line movement
+            if (clickedElement is KLine line)
+            {
+                _lineEndOffsetX = line.X2 - line.X;
+                _lineEndOffsetY = line.Y2 - line.Y;
+            }
+        }
+    }
+    
+    private async Task OnMouseMove(MouseEventArgs e)
+    {
+        if (_isDragging && SelectedElement != null)
+        {
+            var (x, y) = await GetSvgPoint(e);
+            var dx = x - _dragStartX;
+            var dy = y - _dragStartY;
+            
+            SelectedElement.X = _elementStartX + dx;
+            SelectedElement.Y = _elementStartY + dy;
+            
+            // For lines, move the end point by applying the stored offset
+            if (SelectedElement is KLine line)
+            {
+                line.X2 = SelectedElement.X + _lineEndOffsetX;
+                line.Y2 = SelectedElement.Y + _lineEndOffsetY;
+            }
+            
+            DesignService.NotifyStateChanged();
+        }
+    }
+    
+    private void OnMouseUp(MouseEventArgs e)
+    {
+        if (_isDragging)
+        {
+            _isDragging = false;
+            Document.ModifiedAt = DateTime.UtcNow;
+        }
+    }
+    
+    private void OnWheel(WheelEventArgs e)
+    {
+        if (e.CtrlKey)
+        {
+            // Zoom
+            var delta = e.DeltaY < 0 ? 1.1 : 0.9;
+            _zoom = Math.Clamp(_zoom * delta, 0.1, 5.0);
+        }
+        else
+        {
+            // Pan
+            _panX += e.DeltaX * 0.5 / _zoom;
+            _panY += e.DeltaY * 0.5 / _zoom;
+            _panX = Math.Max(0, _panX);
+            _panY = Math.Max(0, _panY);
+        }
+    }
+}

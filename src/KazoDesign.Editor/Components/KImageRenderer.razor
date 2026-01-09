@@ -1,0 +1,29 @@
+@using KazoDesign.Editor.Models
+
+<image x="@Shape.X.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
+       y="@Shape.Y.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+       width="@Shape.Width.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
+       height="@Shape.Height.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+       href="@Shape.Source"
+       preserveAspectRatio="@(Shape.PreserveAspectRatio ? "xMidYMid meet" : "none")"
+       transform="@Shape.GetTransform()"
+       class="design-element @(Shape.IsSelected ? "selected" : "")"
+       data-id="@Shape.Id" />
+
+@if (Shape.IsSelected)
+{
+    <rect x="@((Shape.X - 2).ToString(System.Globalization.CultureInfo.InvariantCulture))" 
+          y="@((Shape.Y - 2).ToString(System.Globalization.CultureInfo.InvariantCulture))"
+          width="@((Shape.Width + 4).ToString(System.Globalization.CultureInfo.InvariantCulture))" 
+          height="@((Shape.Height + 4).ToString(System.Globalization.CultureInfo.InvariantCulture))"
+          fill="none"
+          stroke="#00d4ff"
+          stroke-width="2"
+          stroke-dasharray="4,2"
+          pointer-events="none" />
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public KImage Shape { get; set; } = default!;
+}
