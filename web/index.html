@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kazo Design MCP - AI-Powered Vector Design for VS Code</title>
+    <meta name="description" content="Kazo Design MCP - The AI-powered vector design tool for VS Code. Create diagrams with natural language using Copilot and MCP.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../Kazo_Desing_MCP_ICON.png">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'kazo-dark': '#1e1e1e',
+                        'kazo-darker': '#161616',
+                        'kazo-gray': '#2d2d2d',
+                        'kazo-light-gray': '#3c3c3c',
+                        'kazo-cyan': '#4dc9e6',
+                        'kazo-blue': '#3b82f6',
+                        'kazo-purple': '#9d4edd',
+                        'kazo-violet': '#7c3aed',
+                        'kazo-orange': '#f59e0b',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-text {
+            background: linear-gradient(135deg, #4dc9e6 0%, #3b82f6 50%, #9d4edd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .gradient-border {
+            background: linear-gradient(135deg, #4dc9e6, #3b82f6, #9d4edd);
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(77, 201, 230, 0.1);
+        }
+        .glow {
+            box-shadow: 0 0 40px rgba(77, 201, 230, 0.2), 0 0 80px rgba(157, 78, 221, 0.1);
+        }
+        .tech-badge {
+            background: linear-gradient(135deg, rgba(77, 201, 230, 0.1), rgba(157, 78, 221, 0.1));
+            border: 1px solid rgba(77, 201, 230, 0.3);
+        }
+        .cta-button {
+            background: linear-gradient(135deg, #4dc9e6 0%, #3b82f6 50%, #9d4edd 100%);
+            transition: all 0.3s ease;
+        }
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(77, 201, 230, 0.3);
+        }
+        .feature-icon {
+            background: linear-gradient(135deg, rgba(77, 201, 230, 0.2), rgba(157, 78, 221, 0.2));
+        }
+    </style>
+</head>
+<body class="bg-kazo-darker text-white font-sans antialiased">
+    <!-- Hero Section -->
+    <header class="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <!-- Background decoration -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-kazo-cyan/5 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-kazo-purple/5 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div class="relative z-10 text-center max-w-4xl mx-auto">
+            <!-- Logo -->
+            <div class="mb-8 flex justify-center">
+                <img src="../Kazo_Desing_MCP_LOGO.png" alt="Kazo Design Logo" class="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 object-contain glow rounded-2xl">
+            </div>
+            
+            <!-- Title -->
+            <h1 class="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 gradient-text" data-i18n="title">
+                Kazo Design MCP
+            </h1>
+            
+            <!-- Subtitle -->
+            <p class="text-xl sm:text-2xl lg:text-3xl text-gray-300 mb-8 font-light" data-i18n="subtitle">
+                The AI-powered vector design tool for VS Code.
+            </p>
+            
+            <!-- CTA Button -->
+            <a href="#features" class="inline-block cta-button text-white font-semibold py-4 px-8 rounded-full text-lg shadow-lg" data-i18n="cta">
+                Coming Soon to Marketplace
+            </a>
+        </div>
+        
+        <!-- Scroll indicator -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
+        </div>
+    </header>
+
+    <!-- Description Section -->
+    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-kazo-dark">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-8 gradient-text" data-i18n="description_title">
+                Design with AI, Code with Confidence
+            </h2>
+            <p class="text-lg sm:text-xl text-gray-300 leading-relaxed" data-i18n="description">
+                Powered by a high-performance C# (.NET 10 Blazor WASM) drawing engine, Kazo Design enables Copilot to generate SVG diagrams, fully editable by users and automatically saved as rich technical documentation (Markdown + JSON).
+            </p>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 px-4 sm:px-6 lg:px-8 bg-kazo-darker">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-16 gradient-text" data-i18n="features_title">
+                Key Features
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Feature 1: Hybrid Architecture -->
+                <div class="bg-kazo-gray rounded-2xl p-8 card-hover border border-kazo-light-gray/50">
+                    <div class="feature-icon w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-kazo-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 text-white" data-i18n="feature1_title">Hybrid Architecture</h3>
+                    <p class="text-gray-400 leading-relaxed" data-i18n="feature1_desc">
+                        The power of .NET 10 Blazor for drawing, the fluidity of TypeScript for VS Code integration.
+                    </p>
+                </div>
+
+                <!-- Feature 2: Native SVG Format -->
+                <div class="bg-kazo-gray rounded-2xl p-8 card-hover border border-kazo-light-gray/50">
+                    <div class="feature-icon w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-kazo-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 text-white" data-i18n="feature2_title">Native SVG Format</h3>
+                    <p class="text-gray-400 leading-relaxed" data-i18n="feature2_desc">
+                        Designs are pure SVG files. No proprietary format, easily editable and versionable.
+                    </p>
+                </div>
+
+                <!-- Feature 3: Automatic Documentation -->
+                <div class="bg-kazo-gray rounded-2xl p-8 card-hover border border-kazo-light-gray/50">
+                    <div class="feature-icon w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-kazo-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 text-white" data-i18n="feature3_title">Automatic Documentation</h3>
+                    <p class="text-gray-400 leading-relaxed" data-i18n="feature3_desc">
+                        Each design generates a companion Markdown file including the AI prompt and JSON metadata.
+                    </p>
+                </div>
+
+                <!-- Feature 4: MCP & Copilot Integration -->
+                <div class="bg-kazo-gray rounded-2xl p-8 card-hover border border-kazo-light-gray/50">
+                    <div class="feature-icon w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-kazo-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 text-white" data-i18n="feature4_title">MCP & Copilot Integration</h3>
+                    <p class="text-gray-400 leading-relaxed" data-i18n="feature4_desc">
+                        Use natural language to ask AI to generate or modify your system architectures.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack Section -->
+    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-kazo-dark">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-12 gradient-text" data-i18n="tech_title">
+                Built With Modern Technology
+            </h2>
+            
+            <div class="flex flex-wrap justify-center gap-4">
+                <span class="tech-badge px-6 py-3 rounded-full text-gray-200 font-medium">.NET 10</span>
+                <span class="tech-badge px-6 py-3 rounded-full text-gray-200 font-medium">Blazor WebAssembly</span>
+                <span class="tech-badge px-6 py-3 rounded-full text-gray-200 font-medium">TypeScript</span>
+                <span class="tech-badge px-6 py-3 rounded-full text-gray-200 font-medium">Model Context Protocol (MCP)</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-kazo-darker">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-6 gradient-text" data-i18n="cta_title">
+                Ready to Transform Your Workflow?
+            </h2>
+            <p class="text-lg text-gray-400 mb-8" data-i18n="cta_subtitle">
+                Stay tuned for the official release on the VS Code Marketplace.
+            </p>
+            <a href="#" class="inline-block cta-button text-white font-semibold py-4 px-8 rounded-full text-lg shadow-lg" data-i18n="cta">
+                Coming Soon to Marketplace
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 px-4 sm:px-6 lg:px-8 bg-kazo-darker border-t border-kazo-gray">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <img src="../Kazo_Desing_MCP_ICON.png" alt="Kazo Design Icon" class="w-8 h-8">
+                <span class="text-gray-400 font-medium">Kazo Design MCP</span>
+            </div>
+            <p class="text-gray-500 text-sm" data-i18n="copyright">
+                © 2025 Kazo Design MCP. All rights reserved.
+            </p>
+            <a href="https://github.com/werddomain/Kazo-Desing-MCP" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-kazo-cyan transition-colors">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
+                </svg>
+            </a>
+        </div>
+    </footer>
+
+    <!-- Language Detection and Translation Script -->
+    <script>
+        const translations = {
+            en: {
+                title: "Kazo Design MCP",
+                subtitle: "The AI-powered vector design tool for VS Code.",
+                cta: "Coming Soon to Marketplace",
+                description_title: "Design with AI, Code with Confidence",
+                description: "Powered by a high-performance C# (.NET 10 Blazor WASM) drawing engine, Kazo Design enables Copilot to generate SVG diagrams, fully editable by users and automatically saved as rich technical documentation (Markdown + JSON).",
+                features_title: "Key Features",
+                feature1_title: "Hybrid Architecture",
+                feature1_desc: "The power of .NET 10 Blazor for drawing, the fluidity of TypeScript for VS Code integration.",
+                feature2_title: "Native SVG Format",
+                feature2_desc: "Designs are pure SVG files. No proprietary format, easily editable and versionable.",
+                feature3_title: "Automatic Documentation",
+                feature3_desc: "Each design generates a companion Markdown file including the AI prompt and JSON metadata.",
+                feature4_title: "MCP & Copilot Integration",
+                feature4_desc: "Use natural language to ask AI to generate or modify your system architectures.",
+                tech_title: "Built With Modern Technology",
+                cta_title: "Ready to Transform Your Workflow?",
+                cta_subtitle: "Stay tuned for the official release on the VS Code Marketplace.",
+                copyright: "© 2025 Kazo Design MCP. All rights reserved."
+            },
+            fr: {
+                title: "Kazo Design MCP",
+                subtitle: "L'outil de conception vectorielle assisté par IA pour VS Code.",
+                cta: "Bientôt sur le Marketplace",
+                description_title: "Concevez avec l'IA, Codez en Confiance",
+                description: "Dotée d'un moteur de dessin performant en C# (.NET 10 Blazor WASM), Kazo Design permet à Copilot de générer des schémas SVG, éditables par l'utilisateur et sauvegardés automatiquement en documentation technique riche (Markdown + JSON).",
+                features_title: "Fonctionnalités Clés",
+                feature1_title: "Architecture Hybride",
+                feature1_desc: "La puissance de .NET 10 Blazor pour le dessin, la fluidité de TypeScript pour l'intégration VS Code.",
+                feature2_title: "Format SVG Natif",
+                feature2_desc: "Les designs sont des fichiers SVG purs. Pas de format propriétaire, facilement éditables et versionnables.",
+                feature3_title: "Documentation Automatique",
+                feature3_desc: "Chaque design génère un fichier Markdown compagnon incluant le prompt de l'IA et les métadonnées JSON.",
+                feature4_title: "Intégration MCP & Copilot",
+                feature4_desc: "Utilisez le langage naturel pour demander à l'IA de générer ou modifier vos architectures système.",
+                tech_title: "Construit avec des Technologies Modernes",
+                cta_title: "Prêt à Transformer Votre Workflow ?",
+                cta_subtitle: "Restez à l'écoute pour la sortie officielle sur le Marketplace VS Code.",
+                copyright: "© 2025 Kazo Design MCP. Tous droits réservés."
+            }
+        };
+
+        function detectLanguage() {
+            const browserLang = navigator.language || navigator.userLanguage;
+            return browserLang.startsWith('fr') ? 'fr' : 'en';
+        }
+
+        function applyTranslations(lang) {
+            const t = translations[lang] || translations.en;
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (t[key]) {
+                    element.textContent = t[key];
+                }
+            });
+            document.documentElement.lang = lang;
+            // Update page title
+            document.title = lang === 'fr' 
+                ? "Kazo Design MCP - Conception vectorielle IA pour VS Code"
+                : "Kazo Design MCP - AI-Powered Vector Design for VS Code";
+        }
+
+        // Apply translations on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const lang = detectLanguage();
+            applyTranslations(lang);
+        });
+    </script>
+</body>
+</html>
