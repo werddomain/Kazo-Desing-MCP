@@ -1,0 +1,55 @@
+name: Deploy Website to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'web/**'
+    tags:
+      - 'WebsitePublish*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Prepare assets
+        run: |
+          # Copy logo and icon to web folder for GitHub Pages
+          cp Kazo_Desing_MCP_LOGO.png web/
+          cp Kazo_Desing_MCP_ICON.png web/
+          # Update image paths in HTML for GitHub Pages (relative to web folder)
+          sed -i 's|../Kazo_Desing_MCP_LOGO.png|Kazo_Desing_MCP_LOGO.png|g' web/index.html
+          sed -i 's|../Kazo_Desing_MCP_ICON.png|Kazo_Desing_MCP_ICON.png|g' web/index.html
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './web'
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
