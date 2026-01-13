@@ -1,0 +1,87 @@
+@using KazoDesign.Editor.Models
+@using KazoDesign.Editor.Services
+@inject DesignService DesignService
+
+@if (IsVisible && Element != null)
+{
+    <div class="dialog-overlay" @onclick="Close">
+        <div class="dialog" @onclick:stopPropagation="true">
+            <div class="dialog-header">
+                <h3>Edit Properties</h3>
+                <button class="dialog-close-btn" @onclick="Close" title="Close">
+                    <svg viewBox="0 0 24 24" width="16" height="16">
+                        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="dialog-body">
+                <div class="dialog-field">
+                    <label class="dialog-label">Element Type</label>
+                    <span class="dialog-value">@Element.ElementType</span>
+                </div>
+                
+                <div class="dialog-field">
+                    <label class="dialog-label">Name</label>
+                    <input type="text" 
+                           class="dialog-input" 
+                           placeholder="Enter element name"
+                           @bind="ElementName"
+                           @bind:event="oninput" />
+                </div>
+                
+                <div class="dialog-field">
+                    <label class="dialog-label">Description</label>
+                    <textarea class="dialog-input dialog-textarea" 
+                              placeholder="Enter element description"
+                              @bind="ElementDescription"
+                              @bind:event="oninput"></textarea>
+                </div>
+            </div>
+            
+            <div class="dialog-footer">
+                <button class="dialog-btn dialog-btn-secondary" @onclick="Close">Cancel</button>
+                <button class="dialog-btn dialog-btn-primary" @onclick="Save">Save</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public bool IsVisible { get; set; }
+    
+    [Parameter]
+    public EventCallback<bool> IsVisibleChanged { get; set; }
+    
+    [Parameter]
+    public DesignElement? Element { get; set; }
+    
+    private string? ElementName { get; set; }
+    private string? ElementDescription { get; set; }
+    
+    protected override void OnParametersSet()
+    {
+        if (Element != null && IsVisible)
+        {
+            ElementName = Element.Name;
+            ElementDescription = Element.Description;
+        }
+    }
+    
+    private async Task Close()
+    {
+        await IsVisibleChanged.InvokeAsync(false);
+    }
+    
+    private async Task Save()
+    {
+        if (Element != null)
+        {
+            Element.Name = ElementName;
+            Element.Description = ElementDescription;
+            DesignService.NotifyStateChanged();
+        }
+        await Close();
+    }
+}

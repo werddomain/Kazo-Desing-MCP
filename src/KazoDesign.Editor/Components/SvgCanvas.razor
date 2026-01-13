@@ -11,6 +11,7 @@
          @onmousemove="OnMouseMove"
          @onmouseup="OnMouseUp"
          @onmouseleave="OnMouseUp"
+         @ondblclick="OnDoubleClick"
          @onwheel="OnWheel">
         
         <!-- Background -->
@@ -141,6 +142,29 @@
                 _lineEndOffsetX = line.X2 - line.X;
                 _lineEndOffsetY = line.Y2 - line.Y;
             }
+        }
+    }
+    
+    private async Task OnDoubleClick(MouseEventArgs e)
+    {
+        var (x, y) = await GetSvgPoint(e);
+        
+        // Find element under cursor (reverse order for z-index)
+        DesignElement? clickedElement = null;
+        for (int i = Document.Elements.Count - 1; i >= 0; i--)
+        {
+            if (Document.Elements[i].ContainsPoint(x, y))
+            {
+                clickedElement = Document.Elements[i];
+                break;
+            }
+        }
+        
+        if (clickedElement != null)
+        {
+            DesignService.SelectElement(clickedElement);
+            DesignService.ShouldShowPropertiesDialog = true;
+            DesignService.NotifyStateChanged();
         }
     }
     

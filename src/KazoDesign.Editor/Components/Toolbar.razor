@@ -69,6 +69,12 @@
     {
         <div class="toolbar-group">
             <span class="toolbar-title">Selection</span>
+            <button class="toolbar-btn" @onclick="OpenPropertiesDialog" title="Edit Properties">
+                <svg viewBox="0 0 24 24" width="20" height="20">
+                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" fill="none" stroke="currentColor" stroke-width="2"/>
+                </svg>
+            </button>
             <button class="toolbar-btn danger" @onclick="DeleteSelected" title="Delete Selected">
                 <svg viewBox="0 0 24 24" width="20" height="20">
                     <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2"/>
@@ -76,62 +82,44 @@
             </button>
             <span class="selection-info">@DesignService.SelectedElement.ElementType</span>
         </div>
-        
-        <div class="toolbar-group properties-group">
-            <span class="toolbar-title">Properties</span>
-            <div class="property-input-container">
-                <label class="property-label">Name</label>
-                <input type="text" 
-                       class="property-input" 
-                       placeholder="Element name"
-                       value="@DesignService.SelectedElement.Name"
-                       @onchange="OnNameChanged" />
-            </div>
-            <div class="property-input-container">
-                <label class="property-label">Description</label>
-                <input type="text" 
-                       class="property-input property-input-wide" 
-                       placeholder="Element description"
-                       value="@DesignService.SelectedElement.Description"
-                       @onchange="OnDescriptionChanged" />
-            </div>
-        </div>
     }
 </div>
 
+<PropertiesDialog @bind-IsVisible="_showPropertiesDialog" Element="@DesignService.SelectedElement" />
+
 @code {
+    private bool _showPropertiesDialog;
+    
     protected override void OnInitialized()
     {
-        DesignService.OnChange += StateHasChanged;
+        DesignService.OnChange += OnDesignServiceChange;
     }
     
     public void Dispose()
     {
-        DesignService.OnChange -= StateHasChanged;
+        DesignService.OnChange -= OnDesignServiceChange;
+    }
+    
+    private void OnDesignServiceChange()
+    {
+        // Check if this is a double-click event (element selected with showProperties flag)
+        if (DesignService.ShouldShowPropertiesDialog)
+        {
+            _showPropertiesDialog = true;
+            DesignService.ShouldShowPropertiesDialog = false;
+        }
+        StateHasChanged();
+    }
+    
+    private void OpenPropertiesDialog()
+    {
+        _showPropertiesDialog = true;
     }
     
     private async Task ConfirmAndReturn()
     {
         var result = DesignService.ExportDesignSync();
         await JS.InvokeVoidAsync("kazoDesign.confirmAndReturn", result.Svg, result.Json, result.Title);
-    }
-    
-    private void OnNameChanged(ChangeEventArgs e)
-    {
-        if (DesignService.SelectedElement != null)
-        {
-            DesignService.SelectedElement.Name = e.Value?.ToString();
-            DesignService.NotifyStateChanged();
-        }
-    }
-    
-    private void OnDescriptionChanged(ChangeEventArgs e)
-    {
-        if (DesignService.SelectedElement != null)
-        {
-            DesignService.SelectedElement.Description = e.Value?.ToString();
-            DesignService.NotifyStateChanged();
-        }
     }
     
     private void AddRectangle()

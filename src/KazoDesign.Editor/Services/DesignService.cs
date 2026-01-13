@@ -21,6 +21,11 @@ public class DesignService
     
     public DesignElement? SelectedElement { get; private set; }
     
+    /// <summary>
+    /// Flag to indicate that the properties dialog should be shown (set on double-click).
+    /// </summary>
+    public bool ShouldShowPropertiesDialog { get; set; }
+    
     public event Action? OnChange;
     
     public DesignService(IJSRuntime jsRuntime)
