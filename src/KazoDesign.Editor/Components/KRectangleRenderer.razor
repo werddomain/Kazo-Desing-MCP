@@ -11,7 +11,9 @@
       stroke-width="@((Shape.IsSelected ? Shape.StrokeWidth + 1 : Shape.StrokeWidth).ToString(System.Globalization.CultureInfo.InvariantCulture))"
       transform="@Shape.GetTransform()"
       class="design-element @(Shape.IsSelected ? "selected" : "")"
-      data-id="@Shape.Id" />
+      data-id="@Shape.Id"
+      data-element-name="@(Shape.Name ?? "")"
+      data-element-description="@(Shape.Description ?? "")" />
 
 @code {
     [Parameter, EditorRequired]

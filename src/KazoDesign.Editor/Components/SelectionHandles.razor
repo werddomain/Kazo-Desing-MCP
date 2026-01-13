@@ -15,23 +15,61 @@
       stroke-dasharray="4,2"
       pointer-events="none" />
 
-<!-- Corner handles -->
+<!-- Corner handles - Top Left -->
 <circle cx="@((bounds.x - 4).ToString(System.Globalization.CultureInfo.InvariantCulture))" 
         cy="@((bounds.y - 4).ToString(System.Globalization.CultureInfo.InvariantCulture))" 
-        r="4" fill="#00d4ff" class="handle" />
+        r="5" 
+        fill="#00d4ff" 
+        class="handle handle-nw"
+        @onmousedown="@(e => OnHandleMouseDown(e, ResizeHandle.TopLeft))"
+        @onmousedown:stopPropagation="true" />
+
+<!-- Corner handles - Top Right -->
 <circle cx="@((bounds.x + bounds.width + 4).ToString(System.Globalization.CultureInfo.InvariantCulture))" 
         cy="@((bounds.y - 4).ToString(System.Globalization.CultureInfo.InvariantCulture))" 
-        r="4" fill="#00d4ff" class="handle" />
+        r="5" 
+        fill="#00d4ff" 
+        class="handle handle-ne"
+        @onmousedown="@(e => OnHandleMouseDown(e, ResizeHandle.TopRight))"
+        @onmousedown:stopPropagation="true" />
+
+<!-- Corner handles - Bottom Left -->
 <circle cx="@((bounds.x - 4).ToString(System.Globalization.CultureInfo.InvariantCulture))" 
         cy="@((bounds.y + bounds.height + 4).ToString(System.Globalization.CultureInfo.InvariantCulture))" 
-        r="4" fill="#00d4ff" class="handle" />
+        r="5" 
+        fill="#00d4ff" 
+        class="handle handle-sw"
+        @onmousedown="@(e => OnHandleMouseDown(e, ResizeHandle.BottomLeft))"
+        @onmousedown:stopPropagation="true" />
+
+<!-- Corner handles - Bottom Right -->
 <circle cx="@((bounds.x + bounds.width + 4).ToString(System.Globalization.CultureInfo.InvariantCulture))" 
         cy="@((bounds.y + bounds.height + 4).ToString(System.Globalization.CultureInfo.InvariantCulture))" 
-        r="4" fill="#00d4ff" class="handle" />
+        r="5" 
+        fill="#00d4ff" 
+        class="handle handle-se"
+        @onmousedown="@(e => OnHandleMouseDown(e, ResizeHandle.BottomRight))"
+        @onmousedown:stopPropagation="true" />
 
 @code {
     [Parameter, EditorRequired]
     public DesignElement Element { get; set; } = default!;
+    
+    [Parameter]
+    public EventCallback<(ResizeHandle Handle, MouseEventArgs Args)> OnResizeStart { get; set; }
+    
+    public enum ResizeHandle
+    {
+        TopLeft,
+        TopRight,
+        BottomLeft,
+        BottomRight
+    }
+    
+    private async Task OnHandleMouseDown(MouseEventArgs e, ResizeHandle handle)
+    {
+        await OnResizeStart.InvokeAsync((handle, e));
+    }
     
     private (double x, double y, double width, double height) GetElementBounds()
     {

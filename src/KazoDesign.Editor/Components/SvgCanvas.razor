@@ -56,7 +56,7 @@
         <!-- Selection handles for selected element -->
         @if (SelectedElement != null)
         {
-            <SelectionHandles Element="@SelectedElement" />
+            <SelectionHandles Element="@SelectedElement" OnResizeStart="OnResizeStart" />
         }
     </svg>
 </div>
@@ -66,10 +66,15 @@
     private ElementReference _containerRef;
     
     private bool _isDragging;
+    private bool _isResizing;
+    private SelectionHandles.ResizeHandle _currentResizeHandle;
     private double _dragStartX;
     private double _dragStartY;
     private double _elementStartX;
     private double _elementStartY;
+    private double _elementStartWidth;
+    private double _elementStartHeight;
+    private double _elementStartRadius;
     private double _lineEndOffsetX;  // Offset from line start to end point
     private double _lineEndOffsetY;
     
@@ -139,14 +144,54 @@
         }
     }
     
+    private async Task OnResizeStart((SelectionHandles.ResizeHandle Handle, MouseEventArgs Args) args)
+    {
+        if (SelectedElement == null) return;
+        
+        var (x, y) = await GetSvgPoint(args.Args);
+        _isResizing = true;
+        _currentResizeHandle = args.Handle;
+        _dragStartX = x;
+        _dragStartY = y;
+        _elementStartX = SelectedElement.X;
+        _elementStartY = SelectedElement.Y;
+        
+        // Store initial dimensions based on element type
+        switch (SelectedElement)
+        {
+            case KRectangle rect:
+                _elementStartWidth = rect.Width;
+                _elementStartHeight = rect.Height;
+                break;
+            case KCircle circle:
+                _elementStartRadius = circle.Radius;
+                break;
+            case KImage image:
+                _elementStartWidth = image.Width;
+                _elementStartHeight = image.Height;
+                break;
+            case KLine line:
+                _lineEndOffsetX = line.X2 - line.X;
+                _lineEndOffsetY = line.Y2 - line.Y;
+                break;
+        }
+    }
+    
     private async Task OnMouseMove(MouseEventArgs e)
     {
-        if (_isDragging && SelectedElement != null)
+        if (SelectedElement == null) return;
+        
+        var (x, y) = await GetSvgPoint(e);
+        var dx = x - _dragStartX;
+        var dy = y - _dragStartY;
+        
+        if (_isResizing)
         {
-            var (x, y) = await GetSvgPoint(e);
-            var dx = x - _dragStartX;
-            var dy = y - _dragStartY;
-            
+            ApplyResize(dx, dy);
+            DesignService.NotifyStateChanged();
+        }
+        else if (_isDragging)
+        {
             SelectedElement.X = _elementStartX + dx;
             SelectedElement.Y = _elementStartY + dy;
             
@@ -161,11 +206,151 @@
         }
     }
     
+    private void ApplyResize(double dx, double dy)
+    {
+        switch (SelectedElement)
+        {
+            case KRectangle rect:
+                ApplyRectangleResize(rect, dx, dy);
+                break;
+            case KCircle circle:
+                ApplyCircleResize(circle, dx, dy);
+                break;
+            case KImage image:
+                ApplyImageResize(image, dx, dy);
+                break;
+            case KLine line:
+                ApplyLineResize(line, dx, dy);
+                break;
+            case KText text:
+                ApplyTextResize(text, dx, dy);
+                break;
+        }
+    }
+    
+    private void ApplyRectangleResize(KRectangle rect, double dx, double dy)
+    {
+        const double minSize = 10;
+        
+        switch (_currentResizeHandle)
+        {
+            case SelectionHandles.ResizeHandle.TopLeft:
+                rect.X = _elementStartX + dx;
+                rect.Y = _elementStartY + dy;
+                rect.Width = Math.Max(minSize, _elementStartWidth - dx);
+                rect.Height = Math.Max(minSize, _elementStartHeight - dy);
+                break;
+            case SelectionHandles.ResizeHandle.TopRight:
+                rect.Y = _elementStartY + dy;
+                rect.Width = Math.Max(minSize, _elementStartWidth + dx);
+                rect.Height = Math.Max(minSize, _elementStartHeight - dy);
+                break;
+            case SelectionHandles.ResizeHandle.BottomLeft:
+                rect.X = _elementStartX + dx;
+                rect.Width = Math.Max(minSize, _elementStartWidth - dx);
+                rect.Height = Math.Max(minSize, _elementStartHeight + dy);
+                break;
+            case SelectionHandles.ResizeHandle.BottomRight:
+                rect.Width = Math.Max(minSize, _elementStartWidth + dx);
+                rect.Height = Math.Max(minSize, _elementStartHeight + dy);
+                break;
+        }
+    }
+    
+    private void ApplyCircleResize(KCircle circle, double dx, double dy)
+    {
+        const double minRadius = 5;
+        var delta = Math.Max(Math.Abs(dx), Math.Abs(dy));
+        
+        switch (_currentResizeHandle)
+        {
+            case SelectionHandles.ResizeHandle.TopLeft:
+                circle.Radius = Math.Max(minRadius, _elementStartRadius - delta * Math.Sign(dx + dy) / 2);
+                break;
+            case SelectionHandles.ResizeHandle.TopRight:
+                circle.Radius = Math.Max(minRadius, _elementStartRadius + (dx - dy) / 2);
+                break;
+            case SelectionHandles.ResizeHandle.BottomLeft:
+                circle.Radius = Math.Max(minRadius, _elementStartRadius + (-dx + dy) / 2);
+                break;
+            case SelectionHandles.ResizeHandle.BottomRight:
+                circle.Radius = Math.Max(minRadius, _elementStartRadius + delta * Math.Sign(dx + dy) / 2);
+                break;
+        }
+    }
+    
+    private void ApplyImageResize(KImage image, double dx, double dy)
+    {
+        const double minSize = 10;
+        
+        switch (_currentResizeHandle)
+        {
+            case SelectionHandles.ResizeHandle.TopLeft:
+                image.X = _elementStartX + dx;
+                image.Y = _elementStartY + dy;
+                image.Width = Math.Max(minSize, _elementStartWidth - dx);
+                image.Height = Math.Max(minSize, _elementStartHeight - dy);
+                break;
+            case SelectionHandles.ResizeHandle.TopRight:
+                image.Y = _elementStartY + dy;
+                image.Width = Math.Max(minSize, _elementStartWidth + dx);
+                image.Height = Math.Max(minSize, _elementStartHeight - dy);
+                break;
+            case SelectionHandles.ResizeHandle.BottomLeft:
+                image.X = _elementStartX + dx;
+                image.Width = Math.Max(minSize, _elementStartWidth - dx);
+                image.Height = Math.Max(minSize, _elementStartHeight + dy);
+                break;
+            case SelectionHandles.ResizeHandle.BottomRight:
+                image.Width = Math.Max(minSize, _elementStartWidth + dx);
+                image.Height = Math.Max(minSize, _elementStartHeight + dy);
+                break;
+        }
+    }
+    
+    private void ApplyLineResize(KLine line, double dx, double dy)
+    {
+        switch (_currentResizeHandle)
+        {
+            case SelectionHandles.ResizeHandle.TopLeft:
+            case SelectionHandles.ResizeHandle.BottomLeft:
+                // Move start point
+                line.X = _elementStartX + dx;
+                line.Y = _elementStartY + dy;
+                break;
+            case SelectionHandles.ResizeHandle.TopRight:
+            case SelectionHandles.ResizeHandle.BottomRight:
+                // Move end point
+                line.X2 = _elementStartX + _lineEndOffsetX + dx;
+                line.Y2 = _elementStartY + _lineEndOffsetY + dy;
+                break;
+        }
+    }
+    
+    private void ApplyTextResize(KText text, double dx, double dy)
+    {
+        const double minFontSize = 8;
+        
+        // For text, we adjust font size based on the resize
+        switch (_currentResizeHandle)
+        {
+            case SelectionHandles.ResizeHandle.BottomRight:
+            case SelectionHandles.ResizeHandle.TopRight:
+                text.FontSize = Math.Max(minFontSize, text.FontSize + dy * 0.1);
+                break;
+            case SelectionHandles.ResizeHandle.BottomLeft:
+            case SelectionHandles.ResizeHandle.TopLeft:
+                text.FontSize = Math.Max(minFontSize, text.FontSize - dy * 0.1);
+                break;
+        }
+    }
+    
     private void OnMouseUp(MouseEventArgs e)
     {
-        if (_isDragging)
+        if (_isDragging || _isResizing)
         {
             _isDragging = false;
+            _isResizing = false;
             Document.ModifiedAt = DateTime.UtcNow;
         }
     }

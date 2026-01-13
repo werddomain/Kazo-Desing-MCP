@@ -2,6 +2,7 @@
 @using KazoDesign.Editor.Services
 @inject DesignService DesignService
 @inject IJSRuntime JS
+@implements IDisposable
 
 <div class="toolbar">
     <div class="toolbar-group confirm-group">
@@ -75,14 +76,62 @@
             </button>
             <span class="selection-info">@DesignService.SelectedElement.ElementType</span>
         </div>
+        
+        <div class="toolbar-group properties-group">
+            <span class="toolbar-title">Properties</span>
+            <div class="property-input-container">
+                <label class="property-label">Name</label>
+                <input type="text" 
+                       class="property-input" 
+                       placeholder="Element name"
+                       value="@DesignService.SelectedElement.Name"
+                       @onchange="OnNameChanged" />
+            </div>
+            <div class="property-input-container">
+                <label class="property-label">Description</label>
+                <input type="text" 
+                       class="property-input property-input-wide" 
+                       placeholder="Element description"
+                       value="@DesignService.SelectedElement.Description"
+                       @onchange="OnDescriptionChanged" />
+            </div>
+        </div>
     }
 </div>
 
 @code {
+    protected override void OnInitialized()
+    {
+        DesignService.OnChange += StateHasChanged;
+    }
+    
+    public void Dispose()
+    {
+        DesignService.OnChange -= StateHasChanged;
+    }
+    
     private async Task ConfirmAndReturn()
     {
         var result = DesignService.ExportDesignSync();
         await JS.InvokeVoidAsync("kazoDesign.confirmAndReturn", result.Svg, result.Json, result.Title);
+    }
+    
+    private void OnNameChanged(ChangeEventArgs e)
+    {
+        if (DesignService.SelectedElement != null)
+        {
+            DesignService.SelectedElement.Name = e.Value?.ToString();
+            DesignService.NotifyStateChanged();
+        }
+    }
+    
+    private void OnDescriptionChanged(ChangeEventArgs e)
+    {
+        if (DesignService.SelectedElement != null)
+        {
+            DesignService.SelectedElement.Description = e.Value?.ToString();
+            DesignService.NotifyStateChanged();
+        }
     }
     
     private void AddRectangle()

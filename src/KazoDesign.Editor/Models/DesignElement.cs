@@ -33,6 +33,11 @@ public abstract class DesignElement
     public double Rotation { get; set; }
 
     /// <summary>
+    /// Name of the element (used for identification in exports).
+    /// </summary>
+    public string? Name { get; set; }
+
+    /// <summary>
     /// Description or metadata for the element.
     /// </summary>
     public string? Description { get; set; }

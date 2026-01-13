@@ -8,7 +8,9 @@
        preserveAspectRatio="@(Shape.PreserveAspectRatio ? "xMidYMid meet" : "none")"
        transform="@Shape.GetTransform()"
        class="design-element @(Shape.IsSelected ? "selected" : "")"
-       data-id="@Shape.Id" />
+       data-id="@Shape.Id"
+       data-element-name="@(Shape.Name ?? "")"
+       data-element-description="@(Shape.Description ?? "")" />
 
 @if (Shape.IsSelected)
 {
