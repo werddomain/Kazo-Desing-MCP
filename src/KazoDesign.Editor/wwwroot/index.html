@@ -9,8 +9,79 @@
     <link rel="preload" id="webassembly" />
     <link rel="stylesheet" href="css/app.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
-    <link href="KazoDesign.Editor.styles.css" rel="stylesheet" />
     <script type="importmap"></script>
+    
+    <!-- Error logging for debugging - runs before anything else -->
+    <script>
+        // Error collection for debugging
+        window._kazoErrors = [];
+        
+        function logError(type, message, details) {
+            const errorEntry = { 
+                time: new Date().toISOString(), 
+                type, 
+                message, 
+                details 
+            };
+            window._kazoErrors.push(errorEntry);
+            console.error(`[Kazo ${type}]`, message, details || '');
+            
+            // Send to VS Code if available
+            if (window.vscodeApi) {
+                window.vscodeApi.postMessage({
+                    type: 'error',
+                    data: {
+                        message: `[${type}] ${message}`,
+                        error: details?.error || type,
+                        stack: details?.stack,
+                        source: details?.source,
+                        line: details?.line
+                    }
+                });
+            }
+            
+            // Update visible error panel
+            showErrorPanel(errorEntry);
+        }
+        
+        function showErrorPanel(error) {
+            let panel = document.getElementById('kazo-debug-panel');
+            if (!panel) {
+                panel = document.createElement('div');
+                panel.id = 'kazo-debug-panel';
+                panel.style.cssText = 'position:fixed;bottom:0;left:0;right:0;max-height:40%;overflow:auto;background:#1a1a1a;color:#ff6b6b;font-family:monospace;font-size:12px;padding:10px;border-top:2px solid #ff4444;z-index:99999;';
+                panel.innerHTML = '<div style="display:flex;justify-content:space-between;margin-bottom:8px;color:#fff;"><strong>🐛 Kazo Debug Console</strong><button onclick="this.parentElement.parentElement.remove()" style="background:none;border:none;color:#fff;cursor:pointer;font-size:16px;">✕</button></div><div id="kazo-debug-logs"></div>';
+                document.body.appendChild(panel);
+            }
+            const logs = document.getElementById('kazo-debug-logs');
+            if (logs) {
+                logs.innerHTML += `<div style="border-bottom:1px solid #333;padding:4px 0;"><span style="color:#888;">[${error.time.substr(11,8)}]</span> <span style="color:#ff9999;">[${error.type}]</span> ${error.message}${error.details?.stack ? '<pre style="margin:4px 0;color:#ff6b6b;white-space:pre-wrap;">' + error.details.stack + '</pre>' : ''}</div>`;
+                logs.scrollTop = logs.scrollHeight;
+            }
+        }
+        
+        // Capture all errors
+        window.onerror = function(message, source, lineno, colno, error) {
+            logError('JS Error', message, {
+                source: source,
+                line: lineno,
+                column: colno,
+                stack: error?.stack,
+                error: error?.name || 'Error'
+            });
+            return false;
+        };
+
+        // Capture unhandled promise rejections
+        window.onunhandledrejection = function(event) {
+            logError('Promise Rejection', event.reason?.message || String(event.reason), {
+                stack: event.reason?.stack,
+                error: 'UnhandledRejection'
+            });
+        };
+        
+        console.log('[Kazo] Error handlers initialized');
+    </script>
 </head>
 
 <body>
@@ -22,13 +93,93 @@
         <div class="loading-progress-text"></div>
     </div>
 
-    <div id="blazor-error-ui">
+    <div id="blazor-error-ui" data-nosnippet>
         An unhandled error has occurred.
         <a href="." class="reload">Reload</a>
         <span class="dismiss">🗙</span>
     </div>
     <script src="js/kazo-design.js"></script>
-    <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
+    
+    <!-- Intercept Blazor's NavigationManager initialization -->
+    <script>
+        // Blazor's internal NavigationManager calls Blazor._internal.navigationManager 
+        // to get/set URIs. We need to intercept this to provide fake URLs to .NET
+        // while keeping real URLs for resource loading.
+        
+        window._blazorNavigationInterceptor = {
+            // Provide fake URLs that .NET can parse
+            getBaseURI: function() {
+                return 'https://localhost/';
+            },
+            getLocationHref: function() {
+                return 'https://localhost/';
+            }
+        };
+        
+        // Wait for Blazor to initialize then patch its internal navigation manager
+        const originalDefineProperty = Object.defineProperty;
+        Object.defineProperty = function(obj, prop, descriptor) {
+            if (prop === '_internal' && obj.Blazor !== undefined) {
+                const result = originalDefineProperty.call(this, obj, prop, descriptor);
+                // After Blazor._internal is defined, patch the navigationManager
+                setTimeout(() => {
+                    if (window.Blazor && window.Blazor._internal) {
+                        const origNav = window.Blazor._internal.navigationManager || {};
+                        window.Blazor._internal.navigationManager = {
+                            ...origNav,
+                            getBaseURI: () => 'https://localhost/',
+                            getLocationHref: () => 'https://localhost/'
+                        };
+                        console.log('[Kazo] Patched Blazor._internal.navigationManager');
+                    }
+                }, 0);
+                return result;
+            }
+            return originalDefineProperty.call(this, obj, prop, descriptor);
+        };
+        
+        console.log('[Kazo] Navigation interceptor ready');
+    </script>
+    
+    <script src="_framework/blazor.webassembly#[.{fingerprint}].js" autostart="false"></script>
+    <script>
+        console.log('[Kazo] Starting Blazor...');
+        
+        // Patch Blazor's internal navigation manager after script loads but before start
+        if (window.Blazor && window.Blazor._internal && window.Blazor._internal.navigationManager) {
+            const origNav = window.Blazor._internal.navigationManager;
+            window.Blazor._internal.navigationManager = {
+                ...origNav,
+                getBaseURI: () => 'https://localhost/',
+                getLocationHref: () => 'https://localhost/',
+                listenForNavigationEvents: origNav.listenForNavigationEvents?.bind(origNav),
+                enableNavigationInterception: origNav.enableNavigationInterception?.bind(origNav)
+            };
+            console.log('[Kazo] Patched navigationManager before start');
+        }
+        
+        // Start Blazor with detailed error logging
+        Blazor.start({
+            environment: 'Production',
+            loadBootResource: function (type, name, defaultUri, integrity) {
+                console.log(`[Kazo] Loading: ${type} - ${name}`);
+                return defaultUri;
+            }
+        }).then(() => {
+            console.log('[Kazo] Blazor started successfully');
+            if (window.vscodeApi) {
+                window.vscodeApi.postMessage({ type: 'ready' });
+            }
+        }).catch(err => {
+            logError('Blazor Startup', err?.message || 'Failed to start Blazor', {
+                stack: err?.stack,
+                error: 'BlazorStartupError'
+            });
+            // Show the error UI
+            const errorUi = document.getElementById('blazor-error-ui');
+            if (errorUi) errorUi.style.display = 'block';
+        });
+    </script>
 </body>
 
 </html>

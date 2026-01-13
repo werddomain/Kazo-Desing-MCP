@@ -1,11 +1,20 @@
 import * as vscode from 'vscode';
 import { KazoDesignEditorProvider } from './kazoDesignEditorProvider';
+import { registerMcpTools } from './mcpTools';
+
+// Shared output channel for the extension
+export let outputChannel: vscode.OutputChannel;
 
 export function activate(context: vscode.ExtensionContext) {
-    console.log('Kazo Design MCP extension is now active');
+    // Create output channel first
+    outputChannel = vscode.window.createOutputChannel('Kazo Design');
+    context.subscriptions.push(outputChannel);
+    
+    outputChannel.appendLine('Kazo Design MCP extension is now active');
+    outputChannel.appendLine(`Extension path: ${context.extensionUri.fsPath}`);
 
     // Register the custom editor provider
-    const provider = new KazoDesignEditorProvider(context);
+    const provider = new KazoDesignEditorProvider(context, outputChannel);
 
     // Register commands
     context.subscriptions.push(
@@ -28,6 +37,11 @@ export function activate(context: vscode.ExtensionContext) {
             }
         });
     }
+
+    // Register MCP tools for AI assistant integration
+    registerMcpTools(context, () => provider.openNewEditor());
+
+    outputChannel.appendLine('Kazo Design MCP tools registered for AI assistant integration');
 }
 
 export function deactivate() {

@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
+import { SketchRequestManager } from './mcpTools';
 
 /**
  * Message types for communication between VS Code and Blazor
@@ -59,17 +60,46 @@ export class KazoDesignEditorProvider {
     private panel: vscode.WebviewPanel | undefined;
     private readonly extensionUri: vscode.Uri;
     private readonly context: vscode.ExtensionContext;
+    private readonly outputChannel: vscode.OutputChannel;
 
-    constructor(context: vscode.ExtensionContext) {
+    constructor(context: vscode.ExtensionContext, outputChannel: vscode.OutputChannel) {
         this.context = context;
         this.extensionUri = context.extensionUri;
+        this.outputChannel = outputChannel;
+        this.log('KazoDesignEditorProvider initialized');
+    }
+
+    /**
+     * Logs a message to the output channel
+     */
+    private log(message: string, showChannel: boolean = false): void {
+        const timestamp = new Date().toISOString();
+        this.outputChannel.appendLine(`[${timestamp}] ${message}`);
+        if (showChannel) {
+            this.outputChannel.show(true);
+        }
+    }
+
+    /**
+     * Logs an error to the output channel and shows it
+     */
+    private logError(message: string, details?: string): void {
+        const timestamp = new Date().toISOString();
+        this.outputChannel.appendLine(`[${timestamp}] ERROR: ${message}`);
+        if (details) {
+            this.outputChannel.appendLine(details);
+        }
+        this.outputChannel.show(true);
     }
 
     /**
      * Opens a new Kazo Design editor panel
      */
     public openNewEditor(): void {
+        this.log('Opening Kazo Design editor...');
+        
         if (this.panel) {
+            this.log('Revealing existing panel');
             this.panel.reveal(vscode.ViewColumn.One);
             return;
         }
@@ -81,6 +111,7 @@ export class KazoDesignEditorProvider {
             this.getWebviewOptions()
         );
 
+        this.log('Created new webview panel');
         this.setupWebview(this.panel);
     }
 
@@ -100,6 +131,7 @@ export class KazoDesignEditorProvider {
             enableScripts: true,
             retainContextWhenHidden: true,
             localResourceRoots: [
+                vscode.Uri.joinPath(this.extensionUri, 'media', 'ui', 'wwwroot'),
                 vscode.Uri.joinPath(this.extensionUri, 'media', 'ui'),
                 vscode.Uri.joinPath(this.extensionUri, 'media')
             ]
@@ -149,12 +181,62 @@ export class KazoDesignEditorProvider {
                 break;
 
             case 'ready':
-                console.log('Blazor editor is ready');
+                this.log('Blazor editor is ready');
+                break;
+
+            case 'error':
+                this.handleBlazorError(message as { type: string; data: { message: string; error?: string; source?: string; line?: number; stack?: string } });
+                break;
+
+            case 'log':
+                this.handleBlazorLog(message as { type: string; level?: string; message?: string; data?: unknown });
                 break;
 
             default:
-                console.log('Unknown message type:', message.type);
+                this.log(`Unknown message type: ${message.type}`);
         }
+    }
+
+    /**
+     * Handles log messages from Blazor
+     */
+    private handleBlazorLog(message: { type: string; level?: string; message?: string; data?: unknown }): void {
+        const level = message.level || 'info';
+        const logMessage = message.message || 'Unknown';
+        const data = message.data ? ` | ${JSON.stringify(message.data)}` : '';
+        
+        if (level === 'error' || level === 'warn') {
+            this.logError(`[Blazor ${level.toUpperCase()}] ${logMessage}`, data ? `Data: ${data}` : undefined);
+        } else {
+            this.log(`[Blazor ${level.toUpperCase()}] ${logMessage}${data}`);
+        }
+    }
+
+    /**
+     * Handles error messages from Blazor
+     */
+    private handleBlazorError(message: { type: string; data: { message: string; error?: string; source?: string; line?: number; stack?: string } }): void {
+        const { data } = message;
+        const errorDetails = [
+            `Blazor Error: ${data.message}`,
+            data.error ? `Error: ${data.error}` : '',
+            data.source ? `Source: ${data.source}` : '',
+            data.line ? `Line: ${data.line}` : '',
+            data.stack ? `Stack:\n${data.stack}` : ''
+        ].filter(Boolean).join('\n');
+
+        // Log to output channel and show it
+        this.logError('Blazor Error', errorDetails);
+        
+        // Show error notification
+        vscode.window.showErrorMessage(
+            `Kazo Design Error: ${data.message}`,
+            'Show Output'
+        ).then(choice => {
+            if (choice === 'Show Output') {
+                this.outputChannel.show(true);
+            }
+        });
     }
 
     /**
@@ -318,6 +400,17 @@ export class KazoDesignEditorProvider {
             }
         }
 
+        // Notify the MCP tools that the sketch is complete
+        const sketchManager = SketchRequestManager.getInstance();
+        if (sketchManager.hasPendingRequest()) {
+            sketchManager.completeSketch({
+                success: true,
+                title: title,
+                svg: svg,
+                json: json
+            });
+        }
+
         // Close the editor panel
         if (this.panel) {
             this.panel.dispose();
@@ -354,17 +447,24 @@ export class KazoDesignEditorProvider {
      * Generates the HTML content for the webview
      */
     private getHtmlForWebview(webview: vscode.Webview): string {
-        const mediaPath = vscode.Uri.joinPath(this.extensionUri, 'media', 'ui');
+        this.log('Generating webview HTML...');
+        
+        // Blazor publish outputs to wwwroot subfolder
+        const mediaPath = vscode.Uri.joinPath(this.extensionUri, 'media', 'ui', 'wwwroot');
         
         // Get URIs for resources
         const baseUri = webview.asWebviewUri(mediaPath);
         
-        // Read the original index.html from the Blazor build
-        const indexPath = path.join(this.extensionUri.fsPath, 'media', 'ui', 'index.html');
+        // Read the original index.html from the Blazor build (in wwwroot folder)
+        const indexPath = path.join(this.extensionUri.fsPath, 'media', 'ui', 'wwwroot', 'index.html');
+        
+        this.log(`Looking for index.html at: ${indexPath}`);
+        this.log(`Index exists: ${fs.existsSync(indexPath)}`);
         
         let htmlContent: string;
         
         if (fs.existsSync(indexPath)) {
+            this.log('Found Blazor build, loading index.html...');
             htmlContent = fs.readFileSync(indexPath, 'utf-8');
             
             // Update base href for webview
@@ -373,8 +473,23 @@ export class KazoDesignEditorProvider {
                 `<base href="${baseUri}/" />`
             );
             
+            // Content Security Policy for webview
+            const nonce = this.getNonce();
+            const csp = `
+                <meta http-equiv="Content-Security-Policy" content="
+                    default-src 'none';
+                    style-src ${webview.cspSource} 'unsafe-inline';
+                    script-src ${webview.cspSource} 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval';
+                    img-src ${webview.cspSource} data: blob:;
+                    font-src ${webview.cspSource} data:;
+                    connect-src ${webview.cspSource} https: data: blob:;
+                    worker-src ${webview.cspSource} blob:;
+                ">
+            `;
+            
             // Inject VS Code API script before other scripts
             const vscodeApiScript = `
+                ${csp}
                 <script>
                     const vscode = acquireVsCodeApi();
                     window.vscodeApi = vscode;
@@ -414,8 +529,11 @@ export class KazoDesignEditorProvider {
                 return `src="${resourceUri}"`;
             });
             
+            this.log(`HTML prepared, base URI: ${baseUri}`);
+            
         } else {
             // Fallback HTML when Blazor build is not available
+            this.logError('Blazor build not found!', `Expected at: ${indexPath}`);
             htmlContent = this.getFallbackHtml(webview);
         }
 
@@ -468,5 +586,17 @@ export class KazoDesignEditorProvider {
             </body>
             </html>
         `;
+    }
+
+    /**
+     * Generates a nonce for CSP
+     */
+    private getNonce(): string {
+        let text = '';
+        const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        for (let i = 0; i < 32; i++) {
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        return text;
     }
 }

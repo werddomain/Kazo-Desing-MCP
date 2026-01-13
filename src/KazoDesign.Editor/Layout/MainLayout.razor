@@ -1,5 +1,63 @@
-@inherits LayoutComponentBase
+@inject IJSRuntime JS
 
 <div class="app-container">
-    @Body
+    <ErrorBoundary @ref="errorBoundary">
+        <ChildContent>
+            @ChildContent
+        </ChildContent>
+        <ErrorContent Context="ex">
+            <div class="error-container">
+                <h2>⚠️ An error occurred</h2>
+                <p>@ex.Message</p>
+                <button class="error-retry-btn" @onclick="Recover">Try Again</button>
+                <details>
+                    <summary>Error Details</summary>
+                    <pre>@ex.ToString()</pre>
+                </details>
+            </div>
+            @{ LogError(ex); }
+        </ErrorContent>
+    </ErrorBoundary>
 </div>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+    
+    private ErrorBoundary? errorBoundary;
+
+    private void LogError(Exception exception)
+    {
+        // Log to console
+        Console.WriteLine($"Blazor Error: {exception}");
+        
+        // Send to VS Code asynchronously (fire and forget)
+        _ = SendErrorToVsCodeAsync(exception);
+    }
+
+    private async Task SendErrorToVsCodeAsync(Exception exception)
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("kazoDesign.postMessage", new
+            {
+                type = "error",
+                data = new
+                {
+                    message = exception.Message,
+                    error = exception.GetType().Name,
+                    stack = exception.StackTrace
+                }
+            });
+        }
+        catch
+        {
+            // Ignore if JS interop fails
+        }
+    }
+
+    private void Recover()
+    {
+        errorBoundary?.Recover();
+    }
+}

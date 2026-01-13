@@ -1,0 +1,49 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "npm",
+            "script": "watch",
+            "problemMatcher": "$tsc-watch",
+            "isBackground": true,
+            "presentation": {
+                "reveal": "never"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/vscode-extension"
+            }
+        },
+        {
+            "label": "Build Blazor UI",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "publish",
+                "${workspaceFolder}/src/KazoDesign.Editor/KazoDesign.Editor.csproj",
+                "-c",
+                "Release",
+                "-o",
+                "${workspaceFolder}/vscode-extension/media/ui"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Build All",
+            "dependsOn": [
+                "Build Blazor UI",
+                "npm: compile"
+            ],
+            "dependsOrder": "sequence",
+            "group": "build"
+        }
+    ]
+}
