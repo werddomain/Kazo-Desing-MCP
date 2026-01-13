@@ -146,6 +146,107 @@ When saving a design, two files are created automatically:
    - Open the project in VS Code
    - Press `F5` to launch the Extension Development Host
 
+## Technical Notes: Blazor in VS Code WebView
+
+Running Blazor WebAssembly inside a VS Code WebView requires several patches because the WebView uses a custom URL scheme (`vscode-webview://`) that .NET's `System.Uri` cannot parse.
+
+### The Problem
+
+When Blazor starts, it reads the browser's URL to initialize `NavigationManager`. The `vscode-webview://` scheme causes a `net_uri_BadHostName` exception because .NET's URI parser doesn't recognize it as a valid scheme.
+
+### The Solution
+
+We implement multiple layers of fixes:
+
+#### 1. JavaScript Navigation Interceptor (index.html)
+
+Before Blazor loads, we patch `Blazor._internal.navigationManager` to return fake HTTP URLs:
+
+```javascript
+// Intercept Blazor's NavigationManager initialization
+window._blazorNavigationInterceptor = {
+    getBaseURI: function() { return 'https://localhost/'; },
+    getLocationHref: function() { return 'https://localhost/'; }
+};
+
+// Patch after Blazor script loads but before start
+if (window.Blazor && window.Blazor._internal && window.Blazor._internal.navigationManager) {
+    window.Blazor._internal.navigationManager = {
+        ...window.Blazor._internal.navigationManager,
+        getBaseURI: () => 'https://localhost/',
+        getLocationHref: () => 'https://localhost/'
+    };
+}
+```
+
+#### 2. FakeNavigationManager (C#)
+
+A custom `NavigationManager` implementation that ignores real URLs:
+
+```csharp
+// Services/FakeNavigationManager.cs
+public class FakeNavigationManager : NavigationManager, IHostEnvironmentNavigationManager
+{
+    public FakeNavigationManager()
+    {
+        Initialize("https://localhost/", "https://localhost/");
+    }
+
+    void IHostEnvironmentNavigationManager.Initialize(string baseUri, string uri)
+    {
+        // Ignore real URIs, use fake ones
+        Initialize("https://localhost/", "https://localhost/");
+    }
+
+    protected override void NavigateToCore(string uri, NavigationOptions options)
+    {
+        // Navigation not supported in WebView
+    }
+}
+```
+
+Register in `Program.cs`:
+```csharp
+builder.Services.AddScoped<NavigationManager, FakeNavigationManager>();
+```
+
+#### 3. Removed Router and HeadOutlet
+
+These components internally use `NavigationManager` and can trigger URI parsing before our patches take effect:
+
+```csharp
+// Program.cs - HeadOutlet removed
+builder.RootComponents.Add<App>("#app");
+// builder.RootComponents.Add<HeadOutlet>("head::after"); // REMOVED
+```
+
+```razor
+@* App.razor - Router replaced with direct rendering *@
+@using KazoDesign.Editor.Layout
+@using KazoDesign.Editor.Pages
+
+<MainLayout>
+    <Home />
+</MainLayout>
+```
+
+#### 4. Placeholder HttpClient BaseAddress
+
+The default `HttpClient` registration uses `builder.HostEnvironment.BaseAddress` which also fails:
+
+```csharp
+// Use placeholder URL instead of HostEnvironment.BaseAddress
+builder.Services.AddScoped(sp => new HttpClient { 
+    BaseAddress = new Uri("https://localhost/") 
+});
+```
+
+### Debugging Tips
+
+1. **Open WebView DevTools**: `Ctrl+Shift+P` → "Developer: Open Webview Developer Tools"
+2. **Check Output Channel**: View → Output → "Kazo Design"
+3. **Error Panel**: A debug panel appears in the WebView when errors occur
+
 ### Project Structure
 
 ```
