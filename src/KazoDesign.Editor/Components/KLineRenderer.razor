@@ -11,7 +11,11 @@
       class="design-element @(Shape.IsSelected ? "selected" : "")"
       data-id="@Shape.Id"
       data-element-name="@(Shape.Name ?? "")"
-      data-element-description="@(Shape.Description ?? "")" />
+      data-element-description="@(Shape.Description ?? "")"
+      data-element-type="@Shape.ElementType"
+      data-meaning="@(Shape.Meaning?.ToString() ?? "")"
+      data-x2="@Shape.X2.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+      data-y2="@Shape.Y2.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
 
 @code {
     [Parameter, EditorRequired]

@@ -11,7 +11,13 @@
       class="design-element @(Shape.IsSelected ? "selected" : "") @GetTextTypeClass()"
       data-id="@Shape.Id"
       data-element-name="@(Shape.Name ?? "")"
-      data-element-description="@(Shape.Description ?? "")">@Shape.DisplayText</text>
+      data-element-description="@(Shape.Description ?? "")"
+      data-element-type="@Shape.ElementType"
+      data-meaning="@(Shape.Meaning?.ToString() ?? "")"
+      data-text-type="@Shape.TextType.ToString()"
+      data-text-content="@Shape.Content"
+      data-link-url="@(Shape.LinkUrl ?? "")"
+      data-font-size="@Shape.ComputedFontSize.ToString(System.Globalization.CultureInfo.InvariantCulture)">@Shape.DisplayText</text>
 
 @code {
     [Parameter, EditorRequired]
