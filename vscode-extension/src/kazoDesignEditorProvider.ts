@@ -474,7 +474,6 @@ export class KazoDesignEditorProvider {
             );
             
             // Content Security Policy for webview
-            const nonce = this.getNonce();
             const csp = `
                 <meta http-equiv="Content-Security-Policy" content="
                     default-src 'none';
