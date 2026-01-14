@@ -109,7 +109,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download VS Code Extension artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.8
         with:
           name: vscode-extension-vsix
           path: artifacts/vscode
