@@ -1,63 +1,192 @@
 # Kazo Design MCP
 
-AI-assisted vector diagram editor for VS Code.
+![Kazo Design MCP Logo](https://raw.githubusercontent.com/werddomain/Kazo-Desing-MCP/main/Kazo_Desing_MCP_LOGO.png)
 
-## Features
+**Communicate your design intentions to AI assistants with quick sketches and mockups.**
 
-- **Vector Diagram Editor**: Create and edit SVG-based diagrams directly in VS Code
-- **Blazor-powered UI**: Modern, responsive interface built with .NET Blazor WebAssembly
-- **File Management**: Save designs as SVG with companion Markdown documentation
-- **VS Code Integration**: Native VS Code commands and user interactions
+Kazo Design MCP is a Visual Studio Code extension that helps you communicate your design ideas to AI assistants like GitHub Copilot. Create quick sketches, mockups, or wireframes to visually express what you want the AI to build.
 
-## Usage
+## ✨ Features
 
-1. Open the command palette (`Ctrl+Shift+P` / `Cmd+Shift+P`)
-2. Run `Kazo Design: Open Editor`
-3. Use the toolbar to add shapes (Rectangle, Circle, Line, Text)
-4. Drag shapes to position them
-5. Export your design as SVG or JSON
+### 🎨 Quick Sketch Editor
+Create rapid mockups and wireframes directly within VS Code. The editor provides a simple, intuitive interface for expressing your design ideas to AI assistants.
 
-## Building from Source
+### 🧠 AI Communication Tool (MCP)
+The Model Context Protocol (MCP) integration enables seamless communication between you and your AI assistant. Your sketches become visual context that helps the AI understand exactly what you want.
 
-### Prerequisites
-- .NET 10 SDK
-- Node.js 18+
-- VS Code
+### 🔧 Shape Tools
+- **Rectangle**: Create boxes for layouts, containers, or buttons
+- **Circle**: Add circular elements for icons, avatars, or decorations
+- **Line**: Draw connections, separators, or pointing elements
+- **Text**: Add labels to explain different parts of your sketch
 
-### Build Steps
+### ✅ Confirm & Return
+When your sketch is ready:
+- Click the "Confirm & Return to AI" button
+- Optionally save your sketch to a file
+- The AI receives your visual context and can proceed with your request
 
-1. Build the Blazor UI:
-```bash
-cd src/KazoDesign.Editor
-dotnet publish -c Release -o ../../vscode-extension/media/ui
-```
+### 💾 Smart Export Format
+When saving a design, two files are created automatically:
+- **SVG file**: The vector image for use in documentation, websites, or further editing
+- **Markdown file**: Companion documentation containing title, preview image, original prompt, and technical data in JSON format
 
-2. Build the extension:
-```bash
-cd vscode-extension
-npm install
-npm run compile
-```
+### 🎯 Interactive Canvas
+- **Drag & Drop**: Move elements freely on the canvas
+- **Selection**: Click to select elements for editing or deletion
+- **Grid**: Visual grid overlay for precise alignment
+- **Zoom**: Ctrl+scroll to zoom in/out
+- **Pan**: Scroll to pan around the canvas
 
-3. Press F5 to launch the extension in debug mode
+### 🔌 VS Code Integration
+- Native VS Code commands and keyboard shortcuts
+- Webview panel with full VS Code theming support
+- State persistence across VS Code sessions
 
-## File Format
+## 📋 Workflow
 
-When saving a design, two files are created:
-- `design.svg` - The vector image
-- `design.md` - Companion documentation with:
-  - Title
-  - Preview image
-  - User prompt (if AI-generated)
-  - Technical data in JSON format
+When working with an AI assistant (like GitHub Copilot), use Kazo Design MCP to better communicate your vision:
 
-## Commands
+1. **Request**: Ask the AI to create something (e.g., a web page, a component, a UI layout)
+2. **Sketch**: The AI invites you to create a visual sketch of what you have in mind
+3. **Draw**: Open the SVG editor and draw your idea using simple shapes
+4. **Confirm**: Click the "Confirm & Return to AI" button when your sketch is ready
+5. **Save** (Optional): Choose to save your sketch with a custom name and location
+6. **Generate**: The AI uses your sketch to better understand and implement your request
+
+## 🚀 Usage
+
+### Opening the Editor
+
+1. Open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`)
+2. Type "Kazo Design" and select one of:
+   - `Kazo Design: Open Editor` - Opens the diagram editor
+   - `Kazo Design: New Design` - Creates a new design
+
+### Creating Shapes
+
+1. Click a shape tool in the toolbar (Rectangle, Circle, Line, or Text)
+2. The shape will be added to the canvas at a random position
+3. Drag shapes to reposition them
+4. Click on a shape to select it
+5. Use the Delete button to remove selected shapes
+
+### Exporting Your Design
+
+1. Click the **Export SVG** button to download the SVG file
+2. Click the **Export JSON** button to download the design data
+3. Use the save functionality to create both SVG and Markdown files
+
+## 📝 Commands
 
 | Command | Description |
 |---------|-------------|
-| `Kazo Design: Open Editor` | Opens the diagram editor |
-| `Kazo Design: New Design` | Creates a new design |
+| `Kazo Design: Open Editor` | Opens the diagram editor panel |
+| `Kazo Design: New Design` | Creates a new blank design |
 
-## License
+## 🔧 MCP Tools Available
 
-MIT
+Kazo Design MCP provides several tools for AI assistants:
+
+| Tool | Description |
+|------|-------------|
+| `kazo_sketch` | Request a visual sketch from the user |
+| `kazo_select` | Present options for user selection |
+| `kazo_text` | Request text input from the user |
+| `kazo_file` | Request file/folder selection |
+| `kazo_confirm` | Request confirmation (Yes/No) |
+| `kazo_capabilities` | Get information about available features |
+
+## 📁 File Format
+
+### Design JSON Structure
+
+```json
+{
+  "id": "uuid",
+  "title": "My Design",
+  "canvasWidth": 800,
+  "canvasHeight": 600,
+  "backgroundColor": "#2d2d30",
+  "elements": [
+    {
+      "type": "rectangle",
+      "x": 100,
+      "y": 100,
+      "width": 150,
+      "height": 100,
+      "fill": "#4a90d9",
+      "stroke": "#0078d4"
+    }
+  ],
+  "createdAt": "2024-01-01T00:00:00Z",
+  "modifiedAt": "2024-01-01T00:00:00Z"
+}
+```
+
+### Supported Shape Types
+
+| Type | Properties |
+|------|------------|
+| `rectangle` | x, y, width, height, fill, stroke, cornerRadius |
+| `circle` | x, y, radius, fill, stroke |
+| `line` | x, y, x2, y2, stroke, strokeWidth |
+| `text` | x, y, content, fontSize, fill, fontFamily |
+| `image` | x, y, width, height, href |
+
+## 🔨 Building from Source
+
+### Prerequisites
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
+- [Node.js 18+](https://nodejs.org/)
+- [Visual Studio Code](https://code.visualstudio.com/)
+
+### Build Steps
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/werddomain/Kazo-Desing-MCP.git
+   cd Kazo-Desing-MCP
+   ```
+
+2. **Build the Blazor UI**
+   ```bash
+   cd src/KazoDesign.Editor
+   dotnet restore
+   dotnet publish -c Release -o ../../vscode-extension/media/ui
+   ```
+
+3. **Build the VS Code extension**
+   ```bash
+   cd vscode-extension
+   npm install
+   npm run compile
+   ```
+
+4. **Run in development mode**
+   - Open the project in VS Code
+   - Press `F5` to launch the Extension Development Host
+
+## 📄 License
+
+This project is licensed under the BSD 2-Clause License - see the [LICENSE](https://github.com/werddomain/Kazo-Desing-MCP/blob/main/LICENSE) file for details.
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 🐛 Issues
+
+If you encounter any issues or have feature requests, please [open an issue](https://github.com/werddomain/Kazo-Desing-MCP/issues) on GitHub.
+
+## 🙏 Acknowledgments
+
+- Built with [Blazor WebAssembly](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor)
+- Powered by [VS Code Extension API](https://code.visualstudio.com/api)
+- SVG rendering and manipulation
