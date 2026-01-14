@@ -5,7 +5,7 @@
 @if (IsVisible && Element != null)
 {
     <div class="dialog-overlay" @onclick="Close">
-        <div class="dialog" @onclick:stopPropagation="true">
+        <div class="dialog dialog-large" @onclick:stopPropagation="true">
             <div class="dialog-header">
                 <h3>Edit Properties</h3>
                 <button class="dialog-close-btn" @onclick="Close" title="Close">
@@ -16,27 +16,129 @@
             </div>
             
             <div class="dialog-body">
-                <div class="dialog-field">
-                    <label class="dialog-label">Element Type</label>
-                    <span class="dialog-value">@Element.ElementType</span>
+                <div class="dialog-section">
+                    <h4 class="dialog-section-title">General</h4>
+                    
+                    <div class="dialog-field">
+                        <label class="dialog-label">Element Type</label>
+                        <span class="dialog-value">@Element.ElementType</span>
+                    </div>
+                    
+                    <div class="dialog-field">
+                        <label class="dialog-label">Name</label>
+                        <input type="text" 
+                               class="dialog-input" 
+                               placeholder="Enter element name"
+                               @bind="ElementName"
+                               @bind:event="oninput" />
+                    </div>
+                    
+                    <div class="dialog-field">
+                        <label class="dialog-label">Description</label>
+                        <textarea class="dialog-input dialog-textarea" 
+                                  placeholder="Enter element description"
+                                  @bind="ElementDescription"
+                                  @bind:event="oninput"></textarea>
+                    </div>
                 </div>
-                
-                <div class="dialog-field">
-                    <label class="dialog-label">Name</label>
-                    <input type="text" 
-                           class="dialog-input" 
-                           placeholder="Enter element name"
-                           @bind="ElementName"
-                           @bind:event="oninput" />
+
+                <div class="dialog-section">
+                    <h4 class="dialog-section-title">Appearance</h4>
+                    
+                    <div class="dialog-row">
+                        <div class="dialog-field dialog-field-half">
+                            <label class="dialog-label">Background Color</label>
+                            <div class="color-input-wrapper">
+                                <input type="color" 
+                                       class="dialog-color-input" 
+                                       @bind="ElementBackgroundColor" />
+                                <input type="text" 
+                                       class="dialog-input dialog-input-color-text" 
+                                       placeholder="#000000"
+                                       @bind="ElementBackgroundColor"
+                                       @bind:event="oninput" />
+                            </div>
+                        </div>
+                        
+                        <div class="dialog-field dialog-field-half">
+                            <label class="dialog-label">Border Color</label>
+                            <div class="color-input-wrapper">
+                                <input type="color" 
+                                       class="dialog-color-input" 
+                                       @bind="ElementBorderColor" />
+                                <input type="text" 
+                                       class="dialog-input dialog-input-color-text" 
+                                       placeholder="#000000"
+                                       @bind="ElementBorderColor"
+                                       @bind:event="oninput" />
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="dialog-field">
-                    <label class="dialog-label">Description</label>
-                    <textarea class="dialog-input dialog-textarea" 
-                              placeholder="Enter element description"
-                              @bind="ElementDescription"
-                              @bind:event="oninput"></textarea>
+
+                <div class="dialog-section">
+                    <h4 class="dialog-section-title">Semantic</h4>
+                    
+                    <div class="dialog-field">
+                        <label class="dialog-label">Meaning (Optional)</label>
+                        <select class="dialog-select" @bind="ElementMeaning">
+                            <option value="">None</option>
+                            <option value="Control">Control</option>
+                            <optgroup label="Layout Sections">
+                                <option value="NavBar">NavBar</option>
+                                <option value="Toolbar">Toolbar</option>
+                                <option value="Body">Body</option>
+                                <option value="Panel">Panel</option>
+                                <option value="Footer">Footer</option>
+                                <option value="View">View</option>
+                            </optgroup>
+                            <option value="ImagePlaceholder">Image Placeholder</option>
+                        </select>
+                    </div>
                 </div>
+
+                @if (Element is KText textElement)
+                {
+                    <div class="dialog-section">
+                        <h4 class="dialog-section-title">Text Properties</h4>
+                        
+                        <div class="dialog-field">
+                            <label class="dialog-label">Text Type</label>
+                            <select class="dialog-select" @bind="SelectedTextType">
+                                <option value="Paragraph">Paragraph</option>
+                                <optgroup label="Headers">
+                                    <option value="H1">H1 - Main Header (32px)</option>
+                                    <option value="H2">H2 - Section Header (28px)</option>
+                                    <option value="H3">H3 - Sub Header (24px)</option>
+                                    <option value="H4">H4 - Minor Header (20px)</option>
+                                    <option value="H5">H5 - Small Header (18px)</option>
+                                </optgroup>
+                                <option value="Link">Link</option>
+                            </select>
+                        </div>
+
+                        @if (SelectedTextType == "Link")
+                        {
+                            <div class="dialog-field">
+                                <label class="dialog-label">Link URL</label>
+                                <input type="url" 
+                                       class="dialog-input" 
+                                       placeholder="https://example.com"
+                                       @bind="TextLinkUrl"
+                                       @bind:event="oninput" />
+                            </div>
+                        }
+
+                        <div class="dialog-field">
+                            <label class="dialog-label">Content</label>
+                            <input type="text" 
+                                   class="dialog-input" 
+                                   placeholder="Text content"
+                                   @bind="TextContent"
+                                   @bind:event="oninput" />
+                        </div>
+                    </div>
+                }
             </div>
             
             <div class="dialog-footer">
@@ -59,6 +161,14 @@
     
     private string? ElementName { get; set; }
     private string? ElementDescription { get; set; }
+    private string? ElementBackgroundColor { get; set; }
+    private string? ElementBorderColor { get; set; }
+    private string ElementMeaning { get; set; } = "";
+    
+    // Text-specific properties
+    private string SelectedTextType { get; set; } = "Paragraph";
+    private string? TextLinkUrl { get; set; }
+    private string? TextContent { get; set; }
     
     protected override void OnParametersSet()
     {
@@ -66,6 +176,16 @@
         {
             ElementName = Element.Name;
             ElementDescription = Element.Description;
+            ElementBackgroundColor = Element.BackgroundColor ?? "#000000";
+            ElementBorderColor = Element.BorderColor ?? "#000000";
+            ElementMeaning = Element.Meaning?.ToString() ?? "";
+            
+            if (Element is KText textElement)
+            {
+                SelectedTextType = textElement.TextType.ToString();
+                TextLinkUrl = textElement.LinkUrl;
+                TextContent = textElement.Content;
+            }
         }
     }
     
@@ -80,6 +200,28 @@
         {
             Element.Name = ElementName;
             Element.Description = ElementDescription;
+            Element.BackgroundColor = ElementBackgroundColor;
+            Element.BorderColor = ElementBorderColor;
+            
+            if (!string.IsNullOrEmpty(ElementMeaning) && Enum.TryParse<ElementMeaning>(ElementMeaning, out var meaning))
+            {
+                Element.Meaning = meaning;
+            }
+            else
+            {
+                Element.Meaning = null;
+            }
+            
+            if (Element is KText textElement)
+            {
+                if (Enum.TryParse<TextType>(SelectedTextType, out var textType))
+                {
+                    textElement.TextType = textType;
+                }
+                textElement.LinkUrl = TextLinkUrl;
+                textElement.Content = TextContent ?? "Text";
+            }
+            
             DesignService.NotifyStateChanged();
         }
         await Close();

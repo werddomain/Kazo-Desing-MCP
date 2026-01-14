@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kazo Design MCP - Visual Communication for AI Assistants</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation Toolbar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#home" class="nav-logo">
+                <div class="logo-placeholder">K</div>
+                <span class="logo-text">Kazo Design</span>
+            </a>
+            
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                <span class="hamburger"></span>
+            </button>
+            
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#features" class="nav-link">Features</a></li>
+                <li><a href="#workflow" class="nav-link">How It Works</a></li>
+                <li><a href="#getting-started" class="nav-link">Getting Started</a></li>
+                <li><a href="#technical" class="nav-link">Technical</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero / Logo Banner Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <div class="hero-banner">
+                <div class="hero-logo">
+                    <svg viewBox="0 0 100 100" class="logo-svg">
+                        <rect x="10" y="10" width="80" height="80" rx="10" fill="#4a90d9" stroke="#2d5a87" stroke-width="3"/>
+                        <circle cx="35" cy="40" r="12" fill="#5cb85c"/>
+                        <rect x="55" y="30" width="25" height="20" fill="#f0ad4e" rx="3"/>
+                        <line x1="25" y1="70" x2="75" y2="70" stroke="#e0e0e0" stroke-width="4" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <h1>Kazo Design MCP</h1>
+                <p class="tagline">Visual Communication for AI Assistants</p>
+                <p class="description">
+                    Create quick sketches, mockups, or wireframes to visually express what you want AI to build.
+                    Powered by a high-performance C# rendering engine (.NET 10 Blazor WebAssembly).
+                </p>
+                <div class="hero-badges">
+                    <span class="badge badge-vscode">VS Code Extension</span>
+                    <span class="badge badge-dotnet">.NET 10</span>
+                    <span class="badge badge-blazor">Blazor WebAssembly</span>
+                </div>
+                <a href="#getting-started" class="cta-button">Get Started</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="section">
+        <div class="container">
+            <h2 class="section-title">Features</h2>
+            
+            <!-- Feature 1: Quick Sketch Editor -->
+            <article class="feature-card feature-left">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 50 50">
+                        <rect x="5" y="5" width="40" height="40" rx="5" fill="none" stroke="#5cb85c" stroke-width="2"/>
+                        <path d="M12 35 L20 20 L28 28 L38 12" stroke="#4a90d9" stroke-width="2" fill="none"/>
+                        <circle cx="20" cy="20" r="3" fill="#f0ad4e"/>
+                    </svg>
+                </div>
+                <div class="feature-content">
+                    <h3>🎨 Quick Sketch Editor</h3>
+                    <p>Create rapid mockups and wireframes directly within VS Code. The editor provides a simple, intuitive interface for expressing your design ideas to AI assistants.</p>
+                </div>
+            </article>
+
+            <!-- Feature 2: AI Communication (MCP) -->
+            <article class="feature-card feature-right">
+                <div class="feature-content">
+                    <h3>🧠 AI Communication Tool (MCP)</h3>
+                    <p>The Model Context Protocol (MCP) integration enables seamless communication between you and your AI assistant. Your sketches become visual context that helps the AI understand exactly what you want.</p>
+                </div>
+                <div class="feature-icon">
+                    <svg viewBox="0 0 50 50">
+                        <circle cx="25" cy="25" r="20" fill="none" stroke="#5cb85c" stroke-width="2"/>
+                        <circle cx="25" cy="25" r="8" fill="#4a90d9"/>
+                        <path d="M25 5 L25 10 M25 40 L25 45 M5 25 L10 25 M40 25 L45 25" stroke="#f0ad4e" stroke-width="2"/>
+                    </svg>
+                </div>
+            </article>
+
+            <!-- Feature 3: Shape Tools -->
+            <article class="feature-card feature-left">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 50 50">
+                        <rect x="5" y="5" width="15" height="15" fill="#4a90d9"/>
+                        <circle cx="37" cy="12" r="8" fill="#5cb85c"/>
+                        <line x1="5" y1="35" x2="45" y2="35" stroke="#f0ad4e" stroke-width="3"/>
+                        <text x="5" y="48" font-size="12" fill="#e0e0e0">Aa</text>
+                    </svg>
+                </div>
+                <div class="feature-content">
+                    <h3>🔧 Shape Tools</h3>
+                    <ul class="feature-list">
+                        <li><strong>Rectangle:</strong> Create boxes for layouts, containers, or buttons</li>
+                        <li><strong>Circle:</strong> Add circular elements for icons, avatars, or decorations</li>
+                        <li><strong>Line:</strong> Draw connections, separators, or pointing elements</li>
+                        <li><strong>Text:</strong> Add labels to explain different parts of your sketch</li>
+                    </ul>
+                </div>
+            </article>
+
+            <!-- Feature 4: Smart Export -->
+            <article class="feature-card feature-right">
+                <div class="feature-content">
+                    <h3>💾 Smart Export Format</h3>
+                    <p>When saving a design, two files are created automatically:</p>
+                    <ul class="feature-list">
+                        <li><strong>SVG file:</strong> Vector image for documentation, websites, or further editing</li>
+                        <li><strong>Markdown file:</strong> Companion documentation with title, preview, prompt, and JSON data</li>
+                    </ul>
+                </div>
+                <div class="feature-icon">
+                    <svg viewBox="0 0 50 50">
+                        <rect x="8" y="5" width="34" height="40" rx="3" fill="none" stroke="#5cb85c" stroke-width="2"/>
+                        <path d="M25 15 L25 32 M18 25 L25 32 L32 25" stroke="#4a90d9" stroke-width="2" fill="none"/>
+                        <line x1="15" y1="40" x2="35" y2="40" stroke="#f0ad4e" stroke-width="2"/>
+                    </svg>
+                </div>
+            </article>
+
+            <!-- Feature 5: Interactive Canvas -->
+            <article class="feature-card feature-left">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 50 50">
+                        <rect x="5" y="5" width="40" height="40" fill="none" stroke="#5cb85c" stroke-width="2" stroke-dasharray="4"/>
+                        <rect x="15" y="15" width="20" height="15" fill="#4a90d9" stroke="#2d5a87" stroke-width="1"/>
+                        <path d="M40 35 L45 40 L40 45" stroke="#f0ad4e" stroke-width="2" fill="none"/>
+                    </svg>
+                </div>
+                <div class="feature-content">
+                    <h3>🎯 Interactive Canvas</h3>
+                    <ul class="feature-list">
+                        <li><strong>Drag & Drop:</strong> Move elements freely on the canvas</li>
+                        <li><strong>Selection:</strong> Click to select elements for editing or deletion</li>
+                        <li><strong>Grid:</strong> Visual grid overlay for precise alignment</li>
+                        <li><strong>Zoom:</strong> Ctrl+scroll to zoom in/out</li>
+                        <li><strong>Pan:</strong> Scroll to pan around the canvas</li>
+                    </ul>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <!-- Workflow Section -->
+    <section id="workflow" class="section section-alt">
+        <div class="container">
+            <h2 class="section-title">How It Works</h2>
+            <div class="workflow-steps">
+                <div class="workflow-step">
+                    <div class="step-number">1</div>
+                    <h3>Request</h3>
+                    <p>Ask the AI to create something (e.g., a web page, a component, a UI layout)</p>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">2</div>
+                    <h3>Sketch</h3>
+                    <p>The AI invites you to create a visual sketch of what you have in mind</p>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">3</div>
+                    <h3>Draw</h3>
+                    <p>Open the SVG editor and draw your idea using simple shapes</p>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">4</div>
+                    <h3>Confirm</h3>
+                    <p>Click the "Confirm & Return to AI" button when your sketch is ready</p>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">5</div>
+                    <h3>Generate</h3>
+                    <p>The AI uses your sketch to better understand and implement your request</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Getting Started Section -->
+    <section id="getting-started" class="section">
+        <div class="container">
+            <h2 class="section-title">Getting Started</h2>
+            
+            <div class="getting-started-grid">
+                <div class="install-card">
+                    <h3>📦 Installation</h3>
+                    <div class="install-method">
+                        <h4>From VS Code Marketplace</h4>
+                        <ol>
+                            <li>Open VS Code</li>
+                            <li>Go to Extensions (<code>Ctrl+Shift+X</code>)</li>
+                            <li>Search for "Kazo Design MCP"</li>
+                            <li>Click <strong>Install</strong></li>
+                        </ol>
+                    </div>
+                    <div class="install-method">
+                        <h4>From VSIX File</h4>
+                        <ol>
+                            <li>Download the <code>.vsix</code> file from Releases</li>
+                            <li>In VS Code, go to Extensions</li>
+                            <li>Click <code>...</code> menu → "Install from VSIX..."</li>
+                            <li>Select the downloaded file</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="install-card">
+                    <h3>🚀 Usage</h3>
+                    <div class="install-method">
+                        <h4>Opening the Editor</h4>
+                        <ol>
+                            <li>Open Command Palette (<code>Ctrl+Shift+P</code>)</li>
+                            <li>Type "Kazo Design" and select:
+                                <ul>
+                                    <li><code>Kazo Design: Open Editor</code></li>
+                                    <li><code>Kazo Design: New Design</code></li>
+                                </ul>
+                            </li>
+                        </ol>
+                    </div>
+                    <div class="install-method">
+                        <h4>Creating Shapes</h4>
+                        <ol>
+                            <li>Click a shape tool in the toolbar</li>
+                            <li>The shape appears on the canvas</li>
+                            <li>Drag shapes to reposition</li>
+                            <li>Click to select, Delete to remove</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <div class="commands-table">
+                <h3>Available Commands</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Command</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>Kazo Design: Open Editor</code></td>
+                            <td>Opens the diagram editor panel</td>
+                        </tr>
+                        <tr>
+                            <td><code>Kazo Design: New Design</code></td>
+                            <td>Creates a new blank design</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technical Section -->
+    <section id="technical" class="section section-alt">
+        <div class="container">
+            <h2 class="section-title">Technical Details</h2>
+            
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <h3>🛠 Built With</h3>
+                    <ul>
+                        <li><strong>Blazor WebAssembly</strong> - High-performance C# UI</li>
+                        <li><strong>.NET 10</strong> - Latest .NET runtime</li>
+                        <li><strong>VS Code Extension API</strong> - Native integration</li>
+                        <li><strong>SVG Rendering</strong> - Vector graphics output</li>
+                    </ul>
+                </div>
+
+                <div class="tech-card">
+                    <h3>📁 Project Structure</h3>
+                    <pre><code>Kazo-Desing-MCP/
+├── src/
+│   └── KazoDesign.Editor/   # Blazor UI
+├── vscode-extension/        # VS Code ext
+├── screenshots/             # Docs images
+└── KazoDesign.sln          # Solution</code></pre>
+                </div>
+
+                <div class="tech-card">
+                    <h3>📋 Shape Types</h3>
+                    <table class="shape-table">
+                        <tr><td>Rectangle</td><td>x, y, width, height, fill, stroke</td></tr>
+                        <tr><td>Circle</td><td>x, y, radius, fill, stroke</td></tr>
+                        <tr><td>Line</td><td>x, y, x2, y2, stroke, strokeWidth</td></tr>
+                        <tr><td>Text</td><td>x, y, content, fontSize, fill</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo-placeholder">K</div>
+                    <span>Kazo Design MCP</span>
+                </div>
+                <div class="footer-links">
+                    <a href="https://github.com/werddomain/Kazo-Desing-MCP" target="_blank">GitHub</a>
+                    <a href="https://marketplace.visualstudio.com/items?itemName=werddomain.kazo-design-mcp" target="_blank">VS Code Marketplace</a>
+                    <a href="https://github.com/werddomain/Kazo-Desing-MCP/issues" target="_blank">Report Issue</a>
+                </div>
+                <p class="footer-license">BSD 2-Clause License</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

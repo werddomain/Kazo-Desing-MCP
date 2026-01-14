@@ -2,17 +2,49 @@
 
 <text x="@Shape.X.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
       y="@Shape.Y.ToString(System.Globalization.CultureInfo.InvariantCulture)"
-      font-size="@Shape.FontSize.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+      font-size="@Shape.ComputedFontSize.ToString(System.Globalization.CultureInfo.InvariantCulture)"
       font-family="@Shape.FontFamily"
-      font-weight="@Shape.FontWeight"
-      fill="@(Shape.IsSelected ? "#00d4ff" : Shape.Fill)"
+      font-weight="@Shape.ComputedFontWeight"
+      fill="@GetTextFill()"
+      text-decoration="@GetTextDecoration()"
       transform="@Shape.GetTransform()"
-      class="design-element @(Shape.IsSelected ? "selected" : "")"
+      class="design-element @(Shape.IsSelected ? "selected" : "") @GetTextTypeClass()"
       data-id="@Shape.Id"
       data-element-name="@(Shape.Name ?? "")"
-      data-element-description="@(Shape.Description ?? "")">@Shape.Content</text>
+      data-element-description="@(Shape.Description ?? "")">@Shape.DisplayText</text>
 
 @code {
     [Parameter, EditorRequired]
     public KText Shape { get; set; } = default!;
+
+    private string GetTextFill()
+    {
+        if (Shape.IsSelected)
+            return "#00d4ff";
+        
+        // Links are typically blue/cyan
+        if (Shape.TextType == TextType.Link)
+            return "#4fc3f7";
+        
+        return Shape.Fill;
+    }
+
+    private string GetTextDecoration()
+    {
+        return Shape.TextType == TextType.Link ? "underline" : "none";
+    }
+
+    private string GetTextTypeClass()
+    {
+        return Shape.TextType switch
+        {
+            TextType.H1 => "text-h1",
+            TextType.H2 => "text-h2",
+            TextType.H3 => "text-h3",
+            TextType.H4 => "text-h4",
+            TextType.H5 => "text-h5",
+            TextType.Link => "text-link",
+            _ => "text-paragraph"
+        };
+    }
 }

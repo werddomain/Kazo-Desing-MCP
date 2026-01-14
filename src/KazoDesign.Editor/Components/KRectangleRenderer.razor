@@ -1,19 +1,34 @@
 @using KazoDesign.Editor.Models
 
-<rect x="@Shape.X.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
-      y="@Shape.Y.ToString(System.Globalization.CultureInfo.InvariantCulture)"
-      width="@Shape.Width.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
-      height="@Shape.Height.ToString(System.Globalization.CultureInfo.InvariantCulture)"
-      rx="@Shape.CornerRadius.ToString(System.Globalization.CultureInfo.InvariantCulture)"
-      ry="@Shape.CornerRadius.ToString(System.Globalization.CultureInfo.InvariantCulture)"
-      fill="@Shape.Fill" 
-      stroke="@(Shape.IsSelected ? "#00d4ff" : Shape.Stroke)"
-      stroke-width="@((Shape.IsSelected ? Shape.StrokeWidth + 1 : Shape.StrokeWidth).ToString(System.Globalization.CultureInfo.InvariantCulture))"
-      transform="@Shape.GetTransform()"
-      class="design-element @(Shape.IsSelected ? "selected" : "")"
-      data-id="@Shape.Id"
-      data-element-name="@(Shape.Name ?? "")"
-      data-element-description="@(Shape.Description ?? "")" />
+<g class="design-element-group" data-id="@Shape.Id">
+    <rect x="@Shape.X.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
+          y="@Shape.Y.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+          width="@Shape.Width.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
+          height="@Shape.Height.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+          rx="@Shape.CornerRadius.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+          ry="@Shape.CornerRadius.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+          fill="@Shape.Fill" 
+          stroke="@(Shape.IsSelected ? "#00d4ff" : Shape.Stroke)"
+          stroke-width="@((Shape.IsSelected ? Shape.StrokeWidth + 1 : Shape.StrokeWidth).ToString(System.Globalization.CultureInfo.InvariantCulture))"
+          transform="@Shape.GetTransform()"
+          class="design-element @(Shape.IsSelected ? "selected" : "")"
+          data-id="@Shape.Id"
+          data-element-name="@(Shape.Name ?? "")"
+          data-element-description="@(Shape.Description ?? "")" />
+    
+    @if (!string.IsNullOrWhiteSpace(Shape.Name))
+    {
+        @((MarkupString)$@"<text x=""{(Shape.X + Shape.Width / 2).ToString(System.Globalization.CultureInfo.InvariantCulture)}"" 
+              y=""{(Shape.Y + Shape.Height / 2 + 5).ToString(System.Globalization.CultureInfo.InvariantCulture)}""
+              text-anchor=""middle""
+              font-size=""12""
+              font-family=""Arial, sans-serif""
+              fill=""#ffffff""
+              class=""element-name-label""
+              pointer-events=""none""
+              transform=""{Shape.GetTransform()}"">{System.Net.WebUtility.HtmlEncode(Shape.Name)}</text>")
+    }
+</g>
 
 @code {
     [Parameter, EditorRequired]

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <rect width="100%" height="100%" fill="#1e1e1e" />
+  <rect x="15.542171478271484" y="9.767066955566406" width="722.0080108642578" height="32.369476318359375" fill="#4a90d9" stroke="#2d5a87" stroke-width="2" />
+  <rect x="202.56625366210938" y="57.329315185546875" width="335.8232879638672" height="143.5341339111328" fill="#4a90d9" stroke="#2d5a87" stroke-width="2" />
+  <rect x="24.56224822998047" y="221.8433837890625" width="514.4578094482422" height="112.04818725585938" fill="#4a90d9" stroke="#2d5a87" stroke-width="2" />
+  <circle cx="51.437744140625" cy="247.63453674316406" r="22.650604248046875" fill="#5cb85c" stroke="#3d8b3d" stroke-width="2" />
+  <rect x="27.33333969116211" y="359.6747131347656" width="507.38958740234375" height="95.34136962890625" fill="#4a90d9" stroke="#2d5a87" stroke-width="2" />
+  <text x="88.52207946777344" y="252.7188720703125" font-size="18" font-family="Arial, sans-serif" font-weight="normal" fill="#e0e0e0">New Text</text>
+  <circle cx="508.293212890625" cy="386.2690734863281" r="20.401611328125" fill="#5cb85c" stroke="#3d8b3d" stroke-width="2" />
+  <text x="388.6586151123047" y="393.01607513427734" font-size="18" font-family="Arial, sans-serif" font-weight="normal" fill="#e0e0e0">New Text</text>
+  <rect x="28.55419158935547" y="547.5501251220703" width="500.96385192871094" height="125.54217529296875" fill="#4a90d9" stroke="#2d5a87" stroke-width="2" />
+  <rect x="29.931720733642578" y="478.5582580566406" width="499.6787414550781" height="26.586334228515625" fill="#4a90d9" stroke="#2d5a87" stroke-width="2" />
+</svg>

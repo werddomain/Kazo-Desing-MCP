@@ -3,6 +3,23 @@ using System.Text.Json.Serialization;
 namespace KazoDesign.Editor.Models;
 
 /// <summary>
+/// Defines the semantic meaning of a design element.
+/// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum ElementMeaning
+{
+    None,
+    Control,
+    NavBar,
+    Toolbar,
+    Body,
+    Panel,
+    Footer,
+    View,
+    ImagePlaceholder
+}
+
+/// <summary>
 /// Abstract base class for all design elements on the canvas.
 /// </summary>
 [JsonDerivedType(typeof(KRectangle), "rectangle")]
@@ -41,6 +58,21 @@ public abstract class DesignElement
     /// Description or metadata for the element.
     /// </summary>
     public string? Description { get; set; }
+
+    /// <summary>
+    /// Background color for the element.
+    /// </summary>
+    public string? BackgroundColor { get; set; }
+
+    /// <summary>
+    /// Border color for the element.
+    /// </summary>
+    public string? BorderColor { get; set; }
+
+    /// <summary>
+    /// Semantic meaning of the element (optional).
+    /// </summary>
+    public ElementMeaning? Meaning { get; set; }
 
     /// <summary>
     /// Whether the element is currently selected.
