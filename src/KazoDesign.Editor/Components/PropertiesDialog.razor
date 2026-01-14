@@ -43,6 +43,94 @@
                 </div>
 
                 <div class="dialog-section">
+                    <h4 class="dialog-section-title">Position & Size</h4>
+                    
+                    @if (Element is KLine)
+                    {
+                        <div class="dialog-row">
+                            <div class="dialog-field dialog-field-quarter">
+                                <label class="dialog-label">Start X</label>
+                                <input type="number" step="0.1"
+                                       class="dialog-input" 
+                                       @bind="ElementX"
+                                       @bind:event="oninput" />
+                            </div>
+                            <div class="dialog-field dialog-field-quarter">
+                                <label class="dialog-label">Start Y</label>
+                                <input type="number" step="0.1"
+                                       class="dialog-input" 
+                                       @bind="ElementY"
+                                       @bind:event="oninput" />
+                            </div>
+                            <div class="dialog-field dialog-field-quarter">
+                                <label class="dialog-label">End X</label>
+                                <input type="number" step="0.1"
+                                       class="dialog-input" 
+                                       @bind="LineX2"
+                                       @bind:event="oninput" />
+                            </div>
+                            <div class="dialog-field dialog-field-quarter">
+                                <label class="dialog-label">End Y</label>
+                                <input type="number" step="0.1"
+                                       class="dialog-input" 
+                                       @bind="LineY2"
+                                       @bind:event="oninput" />
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="dialog-row">
+                            <div class="dialog-field dialog-field-half">
+                                <label class="dialog-label">X</label>
+                                <input type="number" step="0.1"
+                                       class="dialog-input" 
+                                       @bind="ElementX"
+                                       @bind:event="oninput" />
+                            </div>
+                            <div class="dialog-field dialog-field-half">
+                                <label class="dialog-label">Y</label>
+                                <input type="number" step="0.1"
+                                       class="dialog-input" 
+                                       @bind="ElementY"
+                                       @bind:event="oninput" />
+                            </div>
+                        </div>
+                        
+                        @if (Element is KRectangle || Element is KImage)
+                        {
+                            <div class="dialog-row">
+                                <div class="dialog-field dialog-field-half">
+                                    <label class="dialog-label">Width</label>
+                                    <input type="number" step="0.1" min="1"
+                                           class="dialog-input" 
+                                           @bind="ElementWidth"
+                                           @bind:event="oninput" />
+                                </div>
+                                <div class="dialog-field dialog-field-half">
+                                    <label class="dialog-label">Height</label>
+                                    <input type="number" step="0.1" min="1"
+                                           class="dialog-input" 
+                                           @bind="ElementHeight"
+                                           @bind:event="oninput" />
+                                </div>
+                            </div>
+                        }
+                        
+                        @if (Element is KCircle)
+                        {
+                            <div class="dialog-field">
+                                <label class="dialog-label">Radius</label>
+                                <input type="number" step="0.1" min="1"
+                                       class="dialog-input" 
+                                       @bind="CircleRadius"
+                                       @bind:event="oninput" />
+                            </div>
+                        }
+                    }
+                </div>
+
+                <div class="dialog-section">
                     <h4 class="dialog-section-title">Appearance</h4>
                     
                     <div class="dialog-row">
@@ -137,6 +225,20 @@
                                    @bind="TextContent"
                                    @bind:event="oninput" />
                         </div>
+                        
+                        <div class="dialog-field">
+                            <label class="dialog-label">Text Color</label>
+                            <div class="color-input-wrapper">
+                                <input type="color" 
+                                       class="dialog-color-input" 
+                                       @bind="TextFillColor" />
+                                <input type="text" 
+                                       class="dialog-input dialog-input-color-text" 
+                                       placeholder="#e0e0e0"
+                                       @bind="TextFillColor"
+                                       @bind:event="oninput" />
+                            </div>
+                        </div>
                     </div>
                 }
             </div>
@@ -165,10 +267,20 @@
     private string? ElementBorderColor { get; set; }
     private string ElementMeaning { get; set; } = "";
     
+    // Position & Size properties
+    private double ElementX { get; set; }
+    private double ElementY { get; set; }
+    private double ElementWidth { get; set; }
+    private double ElementHeight { get; set; }
+    private double CircleRadius { get; set; }
+    private double LineX2 { get; set; }
+    private double LineY2 { get; set; }
+    
     // Text-specific properties
     private string SelectedTextType { get; set; } = "Paragraph";
     private string? TextLinkUrl { get; set; }
     private string? TextContent { get; set; }
+    private string TextFillColor { get; set; } = "#e0e0e0";
     
     protected override void OnParametersSet()
     {
@@ -180,11 +292,34 @@
             ElementBorderColor = Element.BorderColor ?? "#000000";
             ElementMeaning = Element.Meaning?.ToString() ?? "";
             
-            if (Element is KText textElement)
+            // Position
+            ElementX = Element.X;
+            ElementY = Element.Y;
+            
+            // Size based on element type
+            switch (Element)
             {
-                SelectedTextType = textElement.TextType.ToString();
-                TextLinkUrl = textElement.LinkUrl;
-                TextContent = textElement.Content;
+                case KRectangle rect:
+                    ElementWidth = rect.Width;
+                    ElementHeight = rect.Height;
+                    break;
+                case KCircle circle:
+                    CircleRadius = circle.Radius;
+                    break;
+                case KImage image:
+                    ElementWidth = image.Width;
+                    ElementHeight = image.Height;
+                    break;
+                case KLine line:
+                    LineX2 = line.X2;
+                    LineY2 = line.Y2;
+                    break;
+                case KText textElement:
+                    SelectedTextType = textElement.TextType.ToString();
+                    TextLinkUrl = textElement.LinkUrl;
+                    TextContent = textElement.Content;
+                    TextFillColor = textElement.Fill;
+                    break;
             }
         }
     }
@@ -203,6 +338,10 @@
             Element.BackgroundColor = ElementBackgroundColor;
             Element.BorderColor = ElementBorderColor;
             
+            // Position
+            Element.X = ElementX;
+            Element.Y = ElementY;
+            
             if (!string.IsNullOrEmpty(ElementMeaning) && Enum.TryParse<ElementMeaning>(ElementMeaning, out var meaning))
             {
                 Element.Meaning = meaning;
@@ -212,14 +351,33 @@
                 Element.Meaning = null;
             }
             
-            if (Element is KText textElement)
+            // Size based on element type
+            switch (Element)
             {
-                if (Enum.TryParse<TextType>(SelectedTextType, out var textType))
-                {
-                    textElement.TextType = textType;
-                }
-                textElement.LinkUrl = TextLinkUrl;
-                textElement.Content = TextContent ?? "Text";
+                case KRectangle rect:
+                    rect.Width = Math.Max(1, ElementWidth);
+                    rect.Height = Math.Max(1, ElementHeight);
+                    break;
+                case KCircle circle:
+                    circle.Radius = Math.Max(1, CircleRadius);
+                    break;
+                case KImage image:
+                    image.Width = Math.Max(1, ElementWidth);
+                    image.Height = Math.Max(1, ElementHeight);
+                    break;
+                case KLine line:
+                    line.X2 = LineX2;
+                    line.Y2 = LineY2;
+                    break;
+                case KText textElement:
+                    if (Enum.TryParse<TextType>(SelectedTextType, out var textType))
+                    {
+                        textElement.TextType = textType;
+                    }
+                    textElement.LinkUrl = TextLinkUrl;
+                    textElement.Content = TextContent ?? "Text";
+                    textElement.Fill = TextFillColor;
+                    break;
             }
             
             DesignService.NotifyStateChanged();

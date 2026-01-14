@@ -113,6 +113,16 @@ html, body {
     color: white;
 }
 
+.toolbar-btn.active {
+    background-color: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
+.toolbar-btn.active:hover {
+    background-color: var(--accent-hover);
+}
+
 /* Confirm button styles */
 .confirm-group {
     padding-right: 1.5rem !important;
@@ -597,6 +607,11 @@ button:focus-visible {
 
 .dialog-field-half {
     flex: 1;
+}
+
+.dialog-field-quarter {
+    flex: 1;
+    min-width: 0;
 }
 
 .dialog-select {

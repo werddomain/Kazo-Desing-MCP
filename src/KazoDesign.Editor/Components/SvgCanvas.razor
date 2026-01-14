@@ -68,6 +68,8 @@
     
     private bool _isDragging;
     private bool _isResizing;
+    private bool _isDrawing;
+    private DesignElement? _drawingElement;
     private SelectionHandles.ResizeHandle _currentResizeHandle;
     private double _dragStartX;
     private double _dragStartY;
@@ -115,6 +117,13 @@
     {
         var (x, y) = await GetSvgPoint(e);
         
+        // If we're in a drawing mode (not Select), start drawing
+        if (DesignService.CurrentTool != DrawingTool.Select)
+        {
+            StartDrawing(x, y);
+            return;
+        }
+        
         // Find element under cursor (reverse order for z-index)
         DesignElement? clickedElement = null;
         for (int i = Document.Elements.Count - 1; i >= 0; i--)
@@ -143,6 +152,68 @@
                 _lineEndOffsetY = line.Y2 - line.Y;
             }
         }
+    }
+    
+    private void StartDrawing(double x, double y)
+    {
+        _isDrawing = true;
+        _dragStartX = x;
+        _dragStartY = y;
+        
+        switch (DesignService.CurrentTool)
+        {
+            case DrawingTool.Rectangle:
+                _drawingElement = new KRectangle
+                {
+                    X = x,
+                    Y = y,
+                    Width = 0,
+                    Height = 0,
+                    Description = "New rectangle"
+                };
+                Document.Elements.Add(_drawingElement);
+                break;
+                
+            case DrawingTool.Circle:
+                _drawingElement = new KCircle
+                {
+                    X = x,
+                    Y = y,
+                    Radius = 0,
+                    Description = "New circle"
+                };
+                Document.Elements.Add(_drawingElement);
+                break;
+                
+            case DrawingTool.Line:
+                _drawingElement = new KLine
+                {
+                    X = x,
+                    Y = y,
+                    X2 = x,
+                    Y2 = y,
+                    Description = "New line"
+                };
+                Document.Elements.Add(_drawingElement);
+                break;
+                
+            case DrawingTool.Text:
+                // Text is added on click, not drag
+                var text = new KText
+                {
+                    X = x,
+                    Y = y,
+                    Content = "New Text",
+                    FontSize = 18,
+                    Description = "New text element"
+                };
+                DesignService.AddElement(text);
+                DesignService.CurrentTool = DrawingTool.Select;
+                _isDrawing = false;
+                return;
+        }
+        
+        DesignService.NotifyStateChanged();
     }
     
     private async Task OnDoubleClick(MouseEventArgs e)
@@ -203,9 +274,17 @@
     
     private async Task OnMouseMove(MouseEventArgs e)
     {
+        var (x, y) = await GetSvgPoint(e);
+        
+        // Handle drawing mode
+        if (_isDrawing && _drawingElement != null)
+        {
+            UpdateDrawing(x, y);
+            return;
+        }
+        
         if (SelectedElement == null) return;
         
-        var (x, y) = await GetSvgPoint(e);
         var dx = x - _dragStartX;
         var dy = y - _dragStartY;
         
@@ -228,6 +307,55 @@
             
             DesignService.NotifyStateChanged();
         }
+    }
+    
+    private void UpdateDrawing(double x, double y)
+    {
+        switch (_drawingElement)
+        {
+            case KRectangle rect:
+                // Calculate width and height, handling negative values
+                var rectWidth = x - _dragStartX;
+                var rectHeight = y - _dragStartY;
+                
+                if (rectWidth < 0)
+                {
+                    rect.X = x;
+                    rect.Width = -rectWidth;
+                }
+                else
+                {
+                    rect.X = _dragStartX;
+                    rect.Width = rectWidth;
+                }
+                
+                if (rectHeight < 0)
+                {
+                    rect.Y = y;
+                    rect.Height = -rectHeight;
+                }
+                else
+                {
+                    rect.Y = _dragStartY;
+                    rect.Height = rectHeight;
+                }
+                break;
+                
+            case KCircle circle:
+                // Radius is distance from start point to current point
+                var dx = x - _dragStartX;
+                var dy = y - _dragStartY;
+                circle.Radius = Math.Sqrt(dx * dx + dy * dy);
+                break;
+                
+            case KLine line:
+                // End point follows the mouse
+                line.X2 = x;
+                line.Y2 = y;
+                break;
+        }
+        
+        DesignService.NotifyStateChanged();
     }
     
     private void ApplyResize(double dx, double dy)
@@ -371,6 +499,37 @@
     
     private void OnMouseUp(MouseEventArgs e)
     {
+        // Finalize drawing
+        if (_isDrawing && _drawingElement != null)
+        {
+            // Check if the element is too small (accidental click)
+            var isTooSmall = _drawingElement switch
+            {
+                KRectangle rect => rect.Width < 5 && rect.Height < 5,
+                KCircle circle => circle.Radius < 5,
+                KLine line => Math.Abs(line.X2 - line.X) < 5 && Math.Abs(line.Y2 - line.Y) < 5,
+                _ => false
+            };
+            
+            if (isTooSmall)
+            {
+                // Remove the element if too small
+                Document.Elements.Remove(_drawingElement);
+            }
+            else
+            {
+                // Select the newly created element
+                DesignService.SelectElement(_drawingElement);
+            }
+            
+            _isDrawing = false;
+            _drawingElement = null;
+            DesignService.CurrentTool = DrawingTool.Select;
+            Document.ModifiedAt = DateTime.UtcNow;
+            DesignService.NotifyStateChanged();
+            return;
+        }
+        
         if (_isDragging || _isResizing)
         {
             _isDragging = false;

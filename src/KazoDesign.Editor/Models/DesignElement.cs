@@ -60,13 +60,15 @@ public abstract class DesignElement
     public string? Description { get; set; }
 
     /// <summary>
-    /// Background color for the element.
+    /// Background color for the element (display only, not serialized).
     /// </summary>
+    [JsonIgnore]
     public string? BackgroundColor { get; set; }
 
     /// <summary>
-    /// Border color for the element.
+    /// Border color for the element (display only, not serialized).
     /// </summary>
+    [JsonIgnore]
     public string? BorderColor { get; set; }
 
     /// <summary>

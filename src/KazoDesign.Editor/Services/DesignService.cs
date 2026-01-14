@@ -5,6 +5,18 @@ using Microsoft.JSInterop;
 namespace KazoDesign.Editor.Services;
 
 /// <summary>
+/// Drawing tool mode for the canvas.
+/// </summary>
+public enum DrawingTool
+{
+    Select,
+    Rectangle,
+    Circle,
+    Line,
+    Text
+}
+
+/// <summary>
 /// Service for managing the design state and providing JSInterop methods.
 /// </summary>
 public class DesignService
@@ -20,6 +32,11 @@ public class DesignService
     public DesignDocument Document { get; private set; } = new();
     
     public DesignElement? SelectedElement { get; private set; }
+    
+    /// <summary>
+    /// Current drawing tool selected.
+    /// </summary>
+    public DrawingTool CurrentTool { get; set; } = DrawingTool.Select;
     
     /// <summary>
     /// Flag to indicate that the properties dialog should be shown (set on double-click).
