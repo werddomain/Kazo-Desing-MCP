@@ -183,6 +183,104 @@
         </div>
     </section>
 
+    <!-- MCP Tools Section -->
+    <section id="mcp-tools" class="py-20 px-4 sm:px-6 lg:px-8 bg-kazo-dark">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-6 gradient-text" data-i18n="mcp_tools_title">
+                MCP Tools for AI Assistants
+            </h2>
+            <p class="text-center text-gray-400 mb-12 max-w-3xl mx-auto" data-i18n="mcp_tools_desc">
+                Kazo Design provides a suite of MCP tools that AI assistants can use to interact with users, enabling rich visual and interactive communication.
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Tool 1: Request Sketch -->
+                <div class="bg-kazo-gray rounded-xl p-6 border border-kazo-light-gray/30">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="text-2xl">🎨</span>
+                        <div>
+                            <h3 class="font-bold text-white">Request Sketch</h3>
+                            <code class="text-xs text-kazo-cyan">#kazo_sketch</code>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm" data-i18n="tool1_desc">
+                        Ask the user to create a visual sketch or mockup. Opens the Kazo Design editor and returns SVG/JSON data.
+                    </p>
+                </div>
+
+                <!-- Tool 2: Select Option -->
+                <div class="bg-kazo-gray rounded-xl p-6 border border-kazo-light-gray/30">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="text-2xl">📋</span>
+                        <div>
+                            <h3 class="font-bold text-white">Select Option</h3>
+                            <code class="text-xs text-kazo-cyan">#kazo_select</code>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm" data-i18n="tool2_desc">
+                        Present a list of options for the user to choose from. Supports multiple selection and sketch replies.
+                    </p>
+                </div>
+
+                <!-- Tool 3: Request Text -->
+                <div class="bg-kazo-gray rounded-xl p-6 border border-kazo-light-gray/30">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="text-2xl">✏️</span>
+                        <div>
+                            <h3 class="font-bold text-white">Request Text</h3>
+                            <code class="text-xs text-kazo-cyan">#kazo_text</code>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm" data-i18n="tool3_desc">
+                        Ask the user to enter custom text via an input dialog. Supports placeholders and password mode.
+                    </p>
+                </div>
+
+                <!-- Tool 4: Select File -->
+                <div class="bg-kazo-gray rounded-xl p-6 border border-kazo-light-gray/30">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="text-2xl">📁</span>
+                        <div>
+                            <h3 class="font-bold text-white">Select File</h3>
+                            <code class="text-xs text-kazo-cyan">#kazo_file</code>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm" data-i18n="tool4_desc">
+                        Ask user to select files or folders. Supports multiple selection and file type filters.
+                    </p>
+                </div>
+
+                <!-- Tool 5: Confirm Action -->
+                <div class="bg-kazo-gray rounded-xl p-6 border border-kazo-light-gray/30">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="text-2xl">✅</span>
+                        <div>
+                            <h3 class="font-bold text-white">Confirm Action</h3>
+                            <code class="text-xs text-kazo-cyan">#kazo_confirm</code>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm" data-i18n="tool5_desc">
+                        Ask for Yes/No confirmation. Customizable button labels for different contexts.
+                    </p>
+                </div>
+
+                <!-- Tool 6: Get Capabilities -->
+                <div class="bg-kazo-gray rounded-xl p-6 border border-kazo-light-gray/30">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="text-2xl">ℹ️</span>
+                        <div>
+                            <h3 class="font-bold text-white">Get Capabilities</h3>
+                            <code class="text-xs text-kazo-cyan">#kazo_capabilities</code>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm" data-i18n="tool6_desc">
+                        Get information about Kazo Design features, available shapes, output formats, and all tools.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Tech Stack Section -->
     <section class="py-20 px-4 sm:px-6 lg:px-8 bg-kazo-dark">
         <div class="max-w-4xl mx-auto text-center">
@@ -206,10 +304,10 @@
                 Ready to Transform Your Workflow?
             </h2>
             <p class="text-lg text-gray-400 mb-8" data-i18n="cta_subtitle">
-                Stay tuned for the official release on the VS Code Marketplace.
+                Available now on the VS Code Marketplace.
             </p>
-            <a href="#" class="inline-block cta-button text-white font-semibold py-4 px-8 rounded-full text-lg shadow-lg" data-i18n="cta">
-                Coming Soon to Marketplace
+            <a href="https://marketplace.visualstudio.com/items?itemName=KazoMedia.kazo-design-mcp" class="inline-block cta-button text-white font-semibold py-4 px-8 rounded-full text-lg shadow-lg" data-i18n="cta">
+                Install from VS Code Marketplace
             </a>
         </div>
     </section>
@@ -238,7 +336,7 @@
             en: {
                 title: "Kazo Design MCP",
                 subtitle: "The AI-powered vector design tool for VS Code.",
-                cta: "Coming Soon to Marketplace",
+                cta: "Install from VS Code Marketplace",
                 description_title: "Design with AI, Code with Confidence",
                 description: "Powered by a high-performance C# (.NET 10 Blazor WASM) drawing engine, Kazo Design enables Copilot to generate SVG diagrams, fully editable by users and automatically saved as rich technical documentation (Markdown + JSON).",
                 features_title: "Key Features",
@@ -250,15 +348,23 @@
                 feature3_desc: "Each design generates a companion Markdown file including the AI prompt and JSON metadata.",
                 feature4_title: "MCP & Copilot Integration",
                 feature4_desc: "Use natural language to ask AI to generate or modify your system architectures.",
+                mcp_tools_title: "MCP Tools for AI Assistants",
+                mcp_tools_desc: "Kazo Design provides a suite of MCP tools that AI assistants can use to interact with users, enabling rich visual and interactive communication.",
+                tool1_desc: "Ask the user to create a visual sketch or mockup. Opens the Kazo Design editor and returns SVG/JSON data.",
+                tool2_desc: "Present a list of options for the user to choose from. Supports multiple selection and sketch replies.",
+                tool3_desc: "Ask the user to enter custom text via an input dialog. Supports placeholders and password mode.",
+                tool4_desc: "Ask user to select files or folders. Supports multiple selection and file type filters.",
+                tool5_desc: "Ask for Yes/No confirmation. Customizable button labels for different contexts.",
+                tool6_desc: "Get information about Kazo Design features, available shapes, output formats, and all tools.",
                 tech_title: "Built With Modern Technology",
                 cta_title: "Ready to Transform Your Workflow?",
-                cta_subtitle: "Stay tuned for the official release on the VS Code Marketplace.",
+                cta_subtitle: "Available now on the VS Code Marketplace.",
                 copyright: "© 2025 Kazo Design MCP. All rights reserved."
             },
             fr: {
                 title: "Kazo Design MCP",
                 subtitle: "L'outil de conception vectorielle assisté par IA pour VS Code.",
-                cta: "Bientôt sur le Marketplace",
+                cta: "Installer depuis le Marketplace VS Code",
                 description_title: "Concevez avec l'IA, Codez en Confiance",
                 description: "Dotée d'un moteur de dessin performant en C# (.NET 10 Blazor WASM), Kazo Design permet à Copilot de générer des schémas SVG, éditables par l'utilisateur et sauvegardés automatiquement en documentation technique riche (Markdown + JSON).",
                 features_title: "Fonctionnalités Clés",
@@ -270,9 +376,17 @@
                 feature3_desc: "Chaque design génère un fichier Markdown compagnon incluant le prompt de l'IA et les métadonnées JSON.",
                 feature4_title: "Intégration MCP & Copilot",
                 feature4_desc: "Utilisez le langage naturel pour demander à l'IA de générer ou modifier vos architectures système.",
+                mcp_tools_title: "Outils MCP pour Assistants IA",
+                mcp_tools_desc: "Kazo Design fournit une suite d'outils MCP que les assistants IA peuvent utiliser pour interagir avec les utilisateurs, permettant une communication visuelle et interactive riche.",
+                tool1_desc: "Demandez à l'utilisateur de créer un sketch visuel. Ouvre l'éditeur Kazo Design et retourne les données SVG/JSON.",
+                tool2_desc: "Présentez une liste d'options à choisir. Supporte la sélection multiple et les réponses par sketch.",
+                tool3_desc: "Demandez à l'utilisateur de saisir du texte. Supporte les placeholders et le mode mot de passe.",
+                tool4_desc: "Demandez à l'utilisateur de sélectionner des fichiers ou dossiers. Supporte la sélection multiple et les filtres.",
+                tool5_desc: "Demandez une confirmation Oui/Non. Labels des boutons personnalisables.",
+                tool6_desc: "Obtenez des informations sur les fonctionnalités, formes disponibles, formats de sortie et outils.",
                 tech_title: "Construit avec des Technologies Modernes",
                 cta_title: "Prêt à Transformer Votre Workflow ?",
-                cta_subtitle: "Restez à l'écoute pour la sortie officielle sur le Marketplace VS Code.",
+                cta_subtitle: "Disponible maintenant sur le Marketplace VS Code.",
                 copyright: "© 2025 Kazo Design MCP. Tous droits réservés."
             }
         };

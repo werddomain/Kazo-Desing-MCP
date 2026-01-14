@@ -3,11 +3,14 @@
 ![Kazo Design MCP Logo](Kazo_Desing_MCP_LOGO.png)
 
 [![VS Code Extension](https://img.shields.io/badge/VS%20Code-Extension-blue?logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=KazoMedia.kazo-design-mcp)
+[![Website](https://img.shields.io/badge/Website-desing.kazo.ca-cyan)](https://desing.kazo.ca/)
 [![License](https://img.shields.io/badge/License-BSD%202--Clause-green.svg)](LICENSE)
 [![.NET](https://img.shields.io/badge/.NET-10.0-purple?logo=dotnet)](https://dotnet.microsoft.com/)
 [![Blazor](https://img.shields.io/badge/Blazor-WebAssembly-blueviolet?logo=blazor)](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor)
 
 A Visual Studio Code extension that helps you communicate your design intentions to AI assistants like GitHub Copilot. Create quick sketches, mockups, or wireframes to visually express what you want the AI to build. Powered by a high-performance C# rendering engine (.NET 10 Blazor WebAssembly).
+
+🌐 **Website:** [https://desing.kazo.ca/](https://desing.kazo.ca/)
 
 ![Editor Overview](screenshots/editor-overview.svg)
 
@@ -111,6 +114,95 @@ When saving a design, two files are created automatically:
 |---------|-------------|
 | `Kazo Design: Open Editor` | Opens the diagram editor panel |
 | `Kazo Design: New Design` | Creates a new blank design |
+
+## MCP Tools for AI Assistants
+
+Kazo Design MCP provides a set of tools that AI assistants (like GitHub Copilot) can use to interact with users. These tools enable rich, visual communication between users and AI.
+
+### Available MCP Tools
+
+| Tool | Reference Name | Description |
+|------|----------------|-------------|
+| **Request Design Sketch** | `#kazo_sketch` | Ask the user to create a visual sketch or mockup. Opens the Kazo Design editor and waits for the user to complete their drawing. |
+| **Select Option** | `#kazo_select` | Present a list of options for the user to choose from. Can optionally allow replying with a sketch. |
+| **Request Text Input** | `#kazo_text` | Ask the user to enter custom text via an input dialog. |
+| **Select File** | `#kazo_file` | Ask the user to select a file or folder from their system. |
+| **Confirm Action** | `#kazo_confirm` | Ask the user to confirm or decline an action (Yes/No dialog). |
+| **Get Capabilities** | `#kazo_capabilities` | Get information about Kazo Design features and available tools. |
+
+### Tool Details
+
+#### 🎨 kazo_request_sketch
+
+Ask the user to create a visual sketch to communicate their design idea.
+
+**Parameters:**
+- `title` (optional): A short title for the sketch (e.g., "Login Page Layout")
+- `prompt` (optional): Instructions for what the user should sketch
+
+**Returns:** SVG and JSON representation of the completed sketch.
+
+**Example usage in AI prompt:**
+> "I need to understand your design idea. Please use #kazo_sketch to draw what you have in mind."
+
+#### 📋 kazo_select_option
+
+Present options for the user to choose from, with optional sketch reply.
+
+**Parameters:**
+- `title` (required): The question or title to display
+- `options` (required): Array of options to choose from
+- `canSelectMany` (optional): Allow multiple selections
+- `allowSketch` (optional): Add "Reply with sketch" option
+- `sketchPrompt` (optional): Instructions if user chooses to sketch
+
+**Returns:** Selected option(s) or sketch data.
+
+#### ✏️ kazo_request_text
+
+Request free-form text input from the user.
+
+**Parameters:**
+- `title` (required): Title of the input dialog
+- `prompt` (optional): Additional instructions
+- `placeholder` (optional): Placeholder text
+- `defaultValue` (optional): Pre-filled default value
+- `password` (optional): Hide input for sensitive data
+
+**Returns:** The entered text.
+
+#### 📁 kazo_select_file
+
+Ask user to select files or folders.
+
+**Parameters:**
+- `title` (required): Title of the file picker
+- `canSelectMany` (optional): Allow multiple file selection
+- `canSelectFolders` (optional): Select folders instead of files
+- `filters` (optional): File type filters (e.g., `{ "Images": ["png", "jpg"] }`)
+- `defaultUri` (optional): Default folder path
+
+**Returns:** Selected file path(s).
+
+#### ✅ kazo_confirm_action
+
+Ask for Yes/No confirmation.
+
+**Parameters:**
+- `title` (required): Short title for the confirmation
+- `message` (required): The confirmation question
+- `confirmLabel` (optional): Custom label for confirm button (default: "Yes")
+- `cancelLabel` (optional): Custom label for cancel button (default: "No")
+
+**Returns:** Whether user confirmed or declined.
+
+#### ℹ️ kazo_get_capabilities
+
+Get information about Kazo Design capabilities.
+
+**Parameters:** None
+
+**Returns:** JSON with available shapes, features, output formats, and tools.
 
 ## Building from Source
 
