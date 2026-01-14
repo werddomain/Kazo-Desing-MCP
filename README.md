@@ -2,7 +2,7 @@
 
 ![Kazo Design MCP Logo](Kazo_Desing_MCP_LOGO.png)
 
-[![VS Code Extension](https://img.shields.io/badge/VS%20Code-Extension-blue?logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=werddomain.kazo-design-mcp)
+[![VS Code Extension](https://img.shields.io/badge/VS%20Code-Extension-blue?logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=KazoMedia.kazo-design-mcp)
 [![License](https://img.shields.io/badge/License-BSD%202--Clause-green.svg)](LICENSE)
 [![.NET](https://img.shields.io/badge/.NET-10.0-purple?logo=dotnet)](https://dotnet.microsoft.com/)
 [![Blazor](https://img.shields.io/badge/Blazor-WebAssembly-blueviolet?logo=blazor)](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor)
