@@ -122,6 +122,30 @@ public class DesignService
     }
     
     /// <summary>
+    /// Sets the MCP context from an AI assistant request.
+    /// Called from JavaScript when VS Code sends mcpContext message.
+    /// </summary>
+    [JSInvokable]
+    public Task SetMcpContext(string title, string prompt)
+    {
+        Console.WriteLine($"Setting MCP context: title='{title}', prompt='{prompt}'");
+        
+        // Set the document title and prompt from the AI request
+        if (!string.IsNullOrWhiteSpace(title))
+        {
+            Document.Title = title;
+        }
+        
+        if (!string.IsNullOrWhiteSpace(prompt))
+        {
+            Document.Prompt = prompt;
+        }
+        
+        NotifyStateChanged();
+        return Task.CompletedTask;
+    }
+    
+    /// <summary>
     /// Exports the current design. Can be called from JavaScript.
     /// </summary>
     [JSInvokable]
@@ -143,7 +167,9 @@ public class DesignService
             Svg = svgContent,
             Json = jsonData,
             Title = Document.Title,
-            Prompt = Document.Prompt
+            Description = Document.Description,
+            Prompt = Document.Prompt,
+            AiContext = Document.AiContext
         };
     }
     
@@ -281,5 +307,7 @@ public class ExportResult
     public string Svg { get; set; } = string.Empty;
     public string Json { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
+    public string? Description { get; set; }
     public string? Prompt { get; set; }
+    public string? AiContext { get; set; }
 }

@@ -4,6 +4,7 @@
 
 [![VS Code Extension](https://img.shields.io/badge/VS%20Code-Extension-blue?logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=KazoMedia.kazo-design-mcp)
 [![Website](https://img.shields.io/badge/Website-desing.kazo.ca-cyan)](https://desing.kazo.ca/)
+[![Changelog](https://img.shields.io/badge/Changelog-v1.0.1-orange)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/License-BSD%202--Clause-green.svg)](LICENSE)
 [![.NET](https://img.shields.io/badge/.NET-10.0-purple?logo=dotnet)](https://dotnet.microsoft.com/)
 [![Blazor](https://img.shields.io/badge/Blazor-WebAssembly-blueviolet?logo=blazor)](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor)

@@ -11,6 +11,11 @@ public class DesignDocument
     public string Title { get; set; } = "Untitled Design";
 
     /// <summary>
+    /// User-editable description of the design purpose or contents.
+    /// </summary>
+    public string? Description { get; set; }
+
+    /// <summary>
     /// Canvas width in pixels.
     /// </summary>
     public double CanvasWidth { get; set; } = 800;
@@ -31,9 +36,16 @@ public class DesignDocument
     public List<DesignElement> Elements { get; set; } = [];
 
     /// <summary>
-    /// User prompt used to generate this design (if AI-generated).
+    /// Original user prompt from AI assistant that initiated this design task.
+    /// This is set by the AI agent when requesting a sketch.
     /// </summary>
     public string? Prompt { get; set; }
+
+    /// <summary>
+    /// AI assistant context - additional information about the task.
+    /// Can be used to store AI-specific metadata for resuming work.
+    /// </summary>
+    public string? AiContext { get; set; }
 
     /// <summary>
     /// Creation timestamp.

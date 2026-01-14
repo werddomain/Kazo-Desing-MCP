@@ -17,7 +17,9 @@ interface SaveDesignMessage extends BlazorMessage {
         svg: string;
         json: string;
         title: string;
+        description?: string;
         prompt?: string;
+        aiContext?: string;
     };
 }
 
@@ -38,7 +40,9 @@ interface ExportResultMessage extends BlazorMessage {
         svg: string;
         json: string;
         title: string;
+        description?: string;
         prompt?: string;
+        aiContext?: string;
     };
 }
 
@@ -48,6 +52,8 @@ interface ConfirmSketchMessage extends BlazorMessage {
         svg: string;
         json: string;
         title: string;
+        description?: string;
+        prompt?: string;
     };
 }
 
@@ -182,6 +188,8 @@ export class KazoDesignEditorProvider {
 
             case 'ready':
                 this.log('Blazor editor is ready');
+                // Send pending MCP request context if available
+                this.sendPendingMcpContext(webview);
                 break;
 
             case 'error':
@@ -194,6 +202,26 @@ export class KazoDesignEditorProvider {
 
             default:
                 this.log(`Unknown message type: ${message.type}`);
+        }
+    }
+
+    /**
+     * Sends pending MCP request context to the webview
+     * This allows the Blazor editor to know the AI's original prompt and title
+     */
+    private sendPendingMcpContext(webview: vscode.Webview): void {
+        const manager = SketchRequestManager.getInstance();
+        const pendingRequest = manager.getPendingRequest();
+        
+        if (pendingRequest) {
+            this.log(`Sending MCP context to webview: title="${pendingRequest.title}", prompt="${pendingRequest.prompt}"`);
+            webview.postMessage({
+                type: 'mcpContext',
+                data: {
+                    title: pendingRequest.title,
+                    prompt: pendingRequest.prompt
+                }
+            });
         }
     }
 
@@ -243,7 +271,7 @@ export class KazoDesignEditorProvider {
      * Handles the save design command from Blazor
      */
     private async handleSaveDesign(message: SaveDesignMessage): Promise<void> {
-        const { svg, json, title, prompt } = message.data;
+        const { svg, json, title, prompt, description } = message.data;
 
         // Ask user for save location
         const saveUri = await vscode.window.showSaveDialog({
@@ -274,7 +302,7 @@ export class KazoDesignEditorProvider {
             fs.writeFileSync(svgPath, svg, 'utf-8');
 
             // Create and save companion markdown file
-            const markdownContent = this.createMarkdownContent(title, svgPath, prompt, json);
+            const markdownContent = this.createMarkdownContent(title, svgPath, prompt, json, description);
             fs.writeFileSync(mdPath, markdownContent, 'utf-8');
 
             vscode.window.showInformationMessage(`Design saved to ${basePath}`);
@@ -291,17 +319,21 @@ export class KazoDesignEditorProvider {
     /**
      * Creates the companion markdown file content
      */
-    private createMarkdownContent(title: string, svgPath: string, prompt: string | undefined, json: string): string {
+    private createMarkdownContent(title: string, svgPath: string, prompt: string | undefined, json: string, description?: string): string {
         const svgFileName = path.basename(svgPath);
         
         let content = `# ${title || 'Untitled Design'}\n\n`;
         content += `![Design](${svgFileName})\n\n`;
         
-        if (prompt) {
-            content += `## Prompt Utilisateur\n\n${prompt}\n\n`;
+        if (description) {
+            content += `## Description\n\n${description}\n\n`;
         }
         
-        content += `## Données Techniques (JSON)\n\n`;
+        if (prompt) {
+            content += `## AI Prompt\n\n${prompt}\n\n`;
+        }
+        
+        content += `## Technical Data (JSON)\n\n`;
         content += '```json\n';
         content += json;
         content += '\n```\n';
@@ -352,7 +384,7 @@ export class KazoDesignEditorProvider {
      * Handles confirm sketch and return to AI assistant
      */
     private async handleConfirmSketch(message: ConfirmSketchMessage): Promise<void> {
-        const { svg, json, title } = message.data;
+        const { svg, json, title, description, prompt } = message.data;
 
         // Ask user if they want to save the sketch
         const saveChoice = await vscode.window.showQuickPick(
@@ -390,7 +422,7 @@ export class KazoDesignEditorProvider {
                     fs.writeFileSync(svgPath, svg, 'utf-8');
 
                     // Create and save companion markdown file
-                    const markdownContent = this.createMarkdownContent(title, svgPath, undefined, json);
+                    const markdownContent = this.createMarkdownContent(title, svgPath, prompt, json, description);
                     fs.writeFileSync(mdPath, markdownContent, 'utf-8');
 
                     vscode.window.showInformationMessage(`Sketch saved to ${basePath}`);

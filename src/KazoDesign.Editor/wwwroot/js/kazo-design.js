@@ -41,10 +41,23 @@ window.kazoDesign = {
     },
 
     // Confirm sketch and return to AI assistant
-    confirmAndReturn: function(svg, json, title) {
+    confirmAndReturn: async function(svg, json, title) {
+        // Get full export result to include all metadata
+        let description, prompt;
+        if (!svg || !json) {
+            const result = await window.kazoDesign.exportDesign();
+            if (result) {
+                svg = svg || result.svg;
+                json = json || result.json;
+                title = title || result.title;
+                description = result.description;
+                prompt = result.prompt;
+            }
+        }
+        
         window.kazoDesign.postMessage({
             type: 'confirmSketch',
-            data: { svg, json, title }
+            data: { svg, json, title, description, prompt }
         });
     },
 
@@ -106,18 +119,22 @@ window.kazoDesign = {
     
     // Save design via VS Code extension
     saveDesign: async function(svg, json, title) {
+        let description, prompt, aiContext;
         if (!svg || !json) {
             const result = await window.kazoDesign.exportDesign();
             if (result) {
                 svg = svg || result.svg;
                 json = json || result.json;
                 title = title || result.title;
+                description = result.description;
+                prompt = result.prompt;
+                aiContext = result.aiContext;
             }
         }
         
         window.kazoDesign.postMessage({
             type: 'saveDesign',
-            data: { svg, json, title }
+            data: { svg, json, title, description, prompt, aiContext }
         });
     },
     
@@ -160,6 +177,22 @@ window.kazoDesign = {
                     }
                 }
                 break;
+            case 'mcpContext':
+                // Receive MCP context from VS Code (AI prompt and title)
+                window.kazoDesign.setMcpContext(message.data);
+                break;
+        }
+    },
+
+    // Set MCP context (called when AI requests a sketch)
+    setMcpContext: async function(context) {
+        console.log('Received MCP context:', context);
+        if (window.kazoDesign.dotNetRef && context) {
+            try {
+                await window.kazoDesign.dotNetRef.invokeMethodAsync('SetMcpContext', context.title, context.prompt);
+            } catch (err) {
+                console.error('Failed to set MCP context:', err);
+            }
         }
     },
 
