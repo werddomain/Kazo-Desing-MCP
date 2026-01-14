@@ -3,7 +3,7 @@
   "displayName": "Kazo Design MCP",
   "description": "Communicate your design intentions to AI assistants with quick sketches and mockups. Create visual wireframes and UI mockups directly in VS Code.",
   "version": "0.1.0",
-  "publisher": "werddomain",
+  "publisher": "KazoMedia",
   "engines": {
     "vscode": "^1.99.0"
   },
