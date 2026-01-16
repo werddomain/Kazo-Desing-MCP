@@ -31,8 +31,8 @@
               height="@Document.CanvasHeight.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
               fill="url(#grid)" />
         
-        <!-- Render all elements -->
-        @foreach (var element in Document.Elements)
+        <!-- Render all elements in current view context -->
+        @foreach (var element in DesignService.GetCurrentViewElements())
         {
             @switch (element)
             {
@@ -124,13 +124,14 @@
             return;
         }
         
-        // Find element under cursor (reverse order for z-index)
+        // Find element under cursor in current view context (reverse order for z-index)
         DesignElement? clickedElement = null;
-        for (int i = Document.Elements.Count - 1; i >= 0; i--)
+        var currentViewElements = DesignService.GetCurrentViewElements().ToList();
+        for (int i = currentViewElements.Count - 1; i >= 0; i--)
         {
-            if (Document.Elements[i].ContainsPoint(x, y))
+            if (currentViewElements[i].ContainsPoint(x, y))
             {
-                clickedElement = Document.Elements[i];
+                clickedElement = currentViewElements[i];
                 break;
             }
         }
@@ -220,13 +221,14 @@
     {
         var (x, y) = await GetSvgPoint(e);
         
-        // Find element under cursor (reverse order for z-index)
+        // Find element under cursor in current view context (reverse order for z-index)
         DesignElement? clickedElement = null;
-        for (int i = Document.Elements.Count - 1; i >= 0; i--)
+        var currentViewElements = DesignService.GetCurrentViewElements().ToList();
+        for (int i = currentViewElements.Count - 1; i >= 0; i--)
         {
-            if (Document.Elements[i].ContainsPoint(x, y))
+            if (currentViewElements[i].ContainsPoint(x, y))
             {
-                clickedElement = Document.Elements[i];
+                clickedElement = currentViewElements[i];
                 break;
             }
         }

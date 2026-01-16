@@ -1,6 +1,7 @@
 @using KazoDesign.Editor.Models
 
-<text x="@Shape.X.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
+<text id="@Shape.Id"
+      x="@Shape.X.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
       y="@Shape.Y.ToString(System.Globalization.CultureInfo.InvariantCulture)"
       font-size="@Shape.ComputedFontSize.ToString(System.Globalization.CultureInfo.InvariantCulture)"
       font-family="@Shape.FontFamily"
