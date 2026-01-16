@@ -1,6 +1,7 @@
 @using KazoDesign.Editor.Models
 
-<line x1="@Shape.X.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
+<line id="@Shape.Id"
+      x1="@Shape.X.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
       y1="@Shape.Y.ToString(System.Globalization.CultureInfo.InvariantCulture)"
       x2="@Shape.X2.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
       y2="@Shape.Y2.ToString(System.Globalization.CultureInfo.InvariantCulture)"

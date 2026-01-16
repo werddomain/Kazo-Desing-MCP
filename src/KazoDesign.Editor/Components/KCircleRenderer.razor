@@ -1,7 +1,8 @@
 @using KazoDesign.Editor.Models
 
 <g class="design-element-group" data-id="@Shape.Id">
-    <circle cx="@Shape.X.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
+    <circle id="@Shape.Id"
+            cx="@Shape.X.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
             cy="@Shape.Y.ToString(System.Globalization.CultureInfo.InvariantCulture)"
             r="@Shape.Radius.ToString(System.Globalization.CultureInfo.InvariantCulture)"
             fill="@Shape.Fill" 

@@ -1,7 +1,10 @@
 @using KazoDesign.Editor.Models
+@using KazoDesign.Editor.Services
+@inject DesignService DesignService
 
 <g class="design-element-group" data-id="@Shape.Id">
-    <rect x="@Shape.X.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
+    <rect id="@Shape.Id"
+          x="@Shape.X.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
           y="@Shape.Y.ToString(System.Globalization.CultureInfo.InvariantCulture)"
           width="@Shape.Width.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
           height="@Shape.Height.ToString(System.Globalization.CultureInfo.InvariantCulture)"
@@ -21,6 +24,28 @@
           data-height="@Shape.Height.ToString(System.Globalization.CultureInfo.InvariantCulture)"
           data-corner-radius="@Shape.CornerRadius.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
     
+    @* Render child elements if this is a View *@
+    @if (Shape.Meaning == ElementMeaning.View && !string.IsNullOrWhiteSpace(Shape.Name))
+    {
+        <g class="view-children" transform="translate(@Shape.X.ToString(System.Globalization.CultureInfo.InvariantCulture), @Shape.Y.ToString(System.Globalization.CultureInfo.InvariantCulture))">
+            <defs>
+                <clipPath id="clip-@Shape.Id">
+                    <rect x="0" y="0" 
+                          width="@Shape.Width.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
+                          height="@Shape.Height.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                          rx="@Shape.CornerRadius.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                          ry="@Shape.CornerRadius.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+                </clipPath>
+            </defs>
+            <g clip-path="url(#clip-@Shape.Id)" pointer-events="none" opacity="0.7">
+                @foreach (var childElement in DesignService.GetViewChildElements(Shape.Name))
+                {
+                    @RenderChildElement(childElement)
+                }
+            </g>
+        </g>
+    }
+    
     @if (!string.IsNullOrWhiteSpace(Shape.Name))
     {
         @((MarkupString)$@"<text x=""{(Shape.X + Shape.Width / 2).ToString(System.Globalization.CultureInfo.InvariantCulture)}"" 
@@ -38,4 +63,56 @@
 @code {
     [Parameter, EditorRequired]
     public KRectangle Shape { get; set; } = default!;
+    
+    private RenderFragment RenderChildElement(DesignElement element) => builder =>
+    {
+        var culture = System.Globalization.CultureInfo.InvariantCulture;
+        
+        switch (element)
+        {
+            case KRectangle rect:
+                builder.OpenElement(0, "rect");
+                builder.AddAttribute(1, "x", rect.X.ToString(culture));
+                builder.AddAttribute(2, "y", rect.Y.ToString(culture));
+                builder.AddAttribute(3, "width", rect.Width.ToString(culture));
+                builder.AddAttribute(4, "height", rect.Height.ToString(culture));
+                builder.AddAttribute(5, "rx", rect.CornerRadius.ToString(culture));
+                builder.AddAttribute(6, "ry", rect.CornerRadius.ToString(culture));
+                builder.AddAttribute(7, "fill", rect.Fill);
+                builder.AddAttribute(8, "stroke", rect.Stroke);
+                builder.AddAttribute(9, "stroke-width", rect.StrokeWidth.ToString(culture));
+                builder.CloseElement();
+                break;
+            case KCircle circle:
+                builder.OpenElement(0, "circle");
+                builder.AddAttribute(1, "cx", circle.X.ToString(culture));
+                builder.AddAttribute(2, "cy", circle.Y.ToString(culture));
+                builder.AddAttribute(3, "r", circle.Radius.ToString(culture));
+                builder.AddAttribute(4, "fill", circle.Fill);
+                builder.AddAttribute(5, "stroke", circle.Stroke);
+                builder.AddAttribute(6, "stroke-width", circle.StrokeWidth.ToString(culture));
+                builder.CloseElement();
+                break;
+            case KLine line:
+                builder.OpenElement(0, "line");
+                builder.AddAttribute(1, "x1", line.X.ToString(culture));
+                builder.AddAttribute(2, "y1", line.Y.ToString(culture));
+                builder.AddAttribute(3, "x2", line.X2.ToString(culture));
+                builder.AddAttribute(4, "y2", line.Y2.ToString(culture));
+                builder.AddAttribute(5, "stroke", line.Stroke);
+                builder.AddAttribute(6, "stroke-width", line.StrokeWidth.ToString(culture));
+                builder.CloseElement();
+                break;
+            case KText text:
+                builder.OpenElement(0, "text");
+                builder.AddAttribute(1, "x", text.X.ToString(culture));
+                builder.AddAttribute(2, "y", text.Y.ToString(culture));
+                builder.AddAttribute(3, "font-size", text.ComputedFontSize.ToString(culture));
+                builder.AddAttribute(4, "font-family", text.FontFamily);
+                builder.AddAttribute(5, "fill", text.Fill);
+                builder.AddContent(6, text.DisplayText);
+                builder.CloseElement();
+                break;
+        }
+    };
 }

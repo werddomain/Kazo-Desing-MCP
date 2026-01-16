@@ -43,6 +43,16 @@ public class DesignService
     /// </summary>
     public bool ShouldShowPropertiesDialog { get; set; }
     
+    /// <summary>
+    /// Current view context. Null means root level, otherwise contains the name of the View element being edited.
+    /// </summary>
+    public string? CurrentViewContext { get; private set; }
+    
+    /// <summary>
+    /// Gets the list of parent views (breadcrumb path from root to current view).
+    /// </summary>
+    public List<string> ViewBreadcrumb { get; private set; } = new();
+    
     public event Action? OnChange;
     
     public DesignService(IJSRuntime jsRuntime)
@@ -75,6 +85,8 @@ public class DesignService
     
     public void AddElement(DesignElement element)
     {
+        // Set the parent to current view context if we're inside a view
+        element.Parent = CurrentViewContext;
         Document.Elements.Add(element);
         SelectElement(element);
         NotifyStateChanged();
@@ -92,9 +104,88 @@ public class DesignService
     
     public void ClearCanvas()
     {
-        Document.Elements.Clear();
+        // Only clear elements in the current view context
+        var elementsToRemove = Document.Elements.Where(e => e.Parent == CurrentViewContext).ToList();
+        foreach (var element in elementsToRemove)
+        {
+            Document.Elements.Remove(element);
+        }
         SelectElement(null);
         NotifyStateChanged();
+    }
+    
+    /// <summary>
+    /// Gets elements that belong to the current view context.
+    /// </summary>
+    public IEnumerable<DesignElement> GetCurrentViewElements()
+    {
+        return Document.Elements.Where(e => e.Parent == CurrentViewContext);
+    }
+    
+    /// <summary>
+    /// Enters into a View element to edit its contents.
+    /// </summary>
+    public void EnterView(string viewName)
+    {
+        // Find the view element
+        var viewElement = Document.Elements.FirstOrDefault(e => e.Name == viewName && e.Meaning == ElementMeaning.View);
+        if (viewElement == null)
+            return;
+            
+        // Add current context to breadcrumb if not null
+        if (CurrentViewContext != null)
+        {
+            ViewBreadcrumb.Add(CurrentViewContext);
+        }
+        
+        CurrentViewContext = viewName;
+        SelectElement(null);
+        NotifyStateChanged();
+    }
+    
+    /// <summary>
+    /// Navigates back to the parent view or root.
+    /// </summary>
+    public void ExitToParentView()
+    {
+        if (ViewBreadcrumb.Count > 0)
+        {
+            CurrentViewContext = ViewBreadcrumb[^1];
+            ViewBreadcrumb.RemoveAt(ViewBreadcrumb.Count - 1);
+        }
+        else
+        {
+            CurrentViewContext = null;
+        }
+        SelectElement(null);
+        NotifyStateChanged();
+    }
+    
+    /// <summary>
+    /// Navigates back to the root level.
+    /// </summary>
+    public void ExitToRoot()
+    {
+        CurrentViewContext = null;
+        ViewBreadcrumb.Clear();
+        SelectElement(null);
+        NotifyStateChanged();
+    }
+    
+    /// <summary>
+    /// Checks if the selected element is a View that can be entered.
+    /// </summary>
+    public bool CanEnterSelectedView()
+    {
+        return SelectedElement != null && SelectedElement.Meaning == ElementMeaning.View && !string.IsNullOrWhiteSpace(SelectedElement.Name);
+    }
+    
+    /// <summary>
+    /// Gets child elements of a View element for rendering preview.
+    /// </summary>
+    public IEnumerable<DesignElement> GetViewChildElements(string viewName)
+    {
+        return Document.Elements.Where(e => e.Parent == viewName);
     }
     
     /// <summary>
@@ -208,33 +299,33 @@ public class DesignService
     {
         var transform = !string.IsNullOrEmpty(r.GetTransform()) ? $" transform=\"{r.GetTransform()}\"" : "";
         var rx = r.CornerRadius > 0 ? $" rx=\"{r.CornerRadius}\" ry=\"{r.CornerRadius}\"" : "";
-        return $"<rect x=\"{r.X}\" y=\"{r.Y}\" width=\"{r.Width}\" height=\"{r.Height}\"{rx} fill=\"{r.Fill}\" stroke=\"{r.Stroke}\" stroke-width=\"{r.StrokeWidth}\"{transform} />";
+        return $"<rect id=\"{r.Id}\" x=\"{r.X}\" y=\"{r.Y}\" width=\"{r.Width}\" height=\"{r.Height}\"{rx} fill=\"{r.Fill}\" stroke=\"{r.Stroke}\" stroke-width=\"{r.StrokeWidth}\"{transform} />";
     }
     
     private static string GenerateCircleSvg(KCircle c)
     {
         var transform = !string.IsNullOrEmpty(c.GetTransform()) ? $" transform=\"{c.GetTransform()}\"" : "";
-        return $"<circle cx=\"{c.X}\" cy=\"{c.Y}\" r=\"{c.Radius}\" fill=\"{c.Fill}\" stroke=\"{c.Stroke}\" stroke-width=\"{c.StrokeWidth}\"{transform} />";
+        return $"<circle id=\"{c.Id}\" cx=\"{c.X}\" cy=\"{c.Y}\" r=\"{c.Radius}\" fill=\"{c.Fill}\" stroke=\"{c.Stroke}\" stroke-width=\"{c.StrokeWidth}\"{transform} />";
     }
     
     private static string GenerateLineSvg(KLine l)
     {
         var transform = !string.IsNullOrEmpty(l.GetTransform()) ? $" transform=\"{l.GetTransform()}\"" : "";
         var dashArray = !string.IsNullOrEmpty(l.StrokeDashArray) ? $" stroke-dasharray=\"{l.StrokeDashArray}\"" : "";
-        return $"<line x1=\"{l.X}\" y1=\"{l.Y}\" x2=\"{l.X2}\" y2=\"{l.Y2}\" stroke=\"{l.Stroke}\" stroke-width=\"{l.StrokeWidth}\"{dashArray}{transform} />";
+        return $"<line id=\"{l.Id}\" x1=\"{l.X}\" y1=\"{l.Y}\" x2=\"{l.X2}\" y2=\"{l.Y2}\" stroke=\"{l.Stroke}\" stroke-width=\"{l.StrokeWidth}\"{dashArray}{transform} />";
     }
     
     private static string GenerateTextSvg(KText t)
     {
         var transform = !string.IsNullOrEmpty(t.GetTransform()) ? $" transform=\"{t.GetTransform()}\"" : "";
-        return $"<text x=\"{t.X}\" y=\"{t.Y}\" font-size=\"{t.FontSize}\" font-family=\"{t.FontFamily}\" font-weight=\"{t.FontWeight}\" fill=\"{t.Fill}\"{transform}>{System.Security.SecurityElement.Escape(t.Content)}</text>";
+        return $"<text id=\"{t.Id}\" x=\"{t.X}\" y=\"{t.Y}\" font-size=\"{t.FontSize}\" font-family=\"{t.FontFamily}\" font-weight=\"{t.FontWeight}\" fill=\"{t.Fill}\"{transform}>{System.Security.SecurityElement.Escape(t.Content)}</text>";
     }
     
     private static string GenerateImageSvg(KImage i)
     {
         var transform = !string.IsNullOrEmpty(i.GetTransform()) ? $" transform=\"{i.GetTransform()}\"" : "";
         var preserveRatio = i.PreserveAspectRatio ? " preserveAspectRatio=\"xMidYMid meet\"" : "";
-        return $"<image x=\"{i.X}\" y=\"{i.Y}\" width=\"{i.Width}\" height=\"{i.Height}\" href=\"{i.Source}\"{preserveRatio}{transform} />";
+        return $"<image id=\"{i.Id}\" x=\"{i.X}\" y=\"{i.Y}\" width=\"{i.Width}\" height=\"{i.Height}\" href=\"{i.Source}\"{preserveRatio}{transform} />";
     }
     
     /// <summary>
