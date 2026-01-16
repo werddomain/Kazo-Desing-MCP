@@ -77,6 +77,12 @@ public abstract class DesignElement
     public ElementMeaning? Meaning { get; set; }
 
     /// <summary>
+    /// Parent view name for nested elements. Elements at root level have null parent.
+    /// When an element has meaning "View", it can contain child elements that reference it as parent.
+    /// </summary>
+    public string? Parent { get; set; }
+
+    /// <summary>
     /// Whether the element is currently selected.
     /// </summary>
     [JsonIgnore]

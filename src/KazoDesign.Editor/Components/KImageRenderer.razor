@@ -1,6 +1,7 @@
 @using KazoDesign.Editor.Models
 
-<image x="@Shape.X.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
+<image id="@Shape.Id"
+       x="@Shape.X.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
        y="@Shape.Y.ToString(System.Globalization.CultureInfo.InvariantCulture)"
        width="@Shape.Width.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
        height="@Shape.Height.ToString(System.Globalization.CultureInfo.InvariantCulture)"
