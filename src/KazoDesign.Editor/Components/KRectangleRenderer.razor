@@ -76,8 +76,11 @@
                 builder.AddAttribute(2, "y", rect.Y.ToString(culture));
                 builder.AddAttribute(3, "width", rect.Width.ToString(culture));
                 builder.AddAttribute(4, "height", rect.Height.ToString(culture));
-                builder.AddAttribute(5, "rx", rect.CornerRadius.ToString(culture));
-                builder.AddAttribute(6, "ry", rect.CornerRadius.ToString(culture));
+                if (rect.CornerRadius > 0)
+                {
+                    builder.AddAttribute(5, "rx", rect.CornerRadius.ToString(culture));
+                    builder.AddAttribute(6, "ry", rect.CornerRadius.ToString(culture));
+                }
                 builder.AddAttribute(7, "fill", rect.Fill);
                 builder.AddAttribute(8, "stroke", rect.Stroke);
                 builder.AddAttribute(9, "stroke-width", rect.StrokeWidth.ToString(culture));
@@ -110,7 +113,8 @@
                 builder.AddAttribute(3, "font-size", text.ComputedFontSize.ToString(culture));
                 builder.AddAttribute(4, "font-family", text.FontFamily);
                 builder.AddAttribute(5, "fill", text.Fill);
-                builder.AddContent(6, text.DisplayText);
+                // Escape HTML/SVG content to prevent XSS vulnerabilities
+                builder.AddContent(6, System.Security.SecurityElement.Escape(text.DisplayText));
                 builder.CloseElement();
                 break;
         }
