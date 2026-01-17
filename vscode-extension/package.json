@@ -254,7 +254,7 @@
             "title": "What is Kazo Design?",
             "description": "Kazo Design lets you create visual sketches to communicate UI ideas to AI assistants like GitHub Copilot.\n\nInstead of describing complex layouts with words, simply draw them!\n\n[Learn more](https://desing.kazo.ca/)",
             "media": {
-              "markdown": "## 🎨 Visual Communication for AI\n\nKazo Design bridges the gap between your visual ideas and AI understanding.\n\n- **Draw wireframes** for web pages and apps\n- **Sketch UI components** like buttons, forms, and navigation\n- **Create mockups** to show layout relationships\n- **Export to SVG/JSON** for AI processing"
+              "markdown": "media/walkthrough/introduction.md"
             }
           },
           {
@@ -262,7 +262,7 @@
             "title": "Open the Design Editor",
             "description": "Open the Kazo Design editor to start creating sketches.\n\n[Open Kazo Design Editor](command:kazoDesign.openEditor)",
             "media": {
-              "markdown": "## 🖌️ The Design Editor\n\nThe Kazo Design editor provides simple drawing tools:\n\n- **Rectangle** - Draw boxes for containers, buttons, cards\n- **Circle** - Create circular elements\n- **Line** - Connect elements or create separators\n- **Text** - Add labels and descriptions\n- **Image** - Reference image placeholders"
+              "markdown": "media/walkthrough/open-editor.md"
             },
             "completionEvents": [
               "onCommand:kazoDesign.openEditor"
@@ -273,7 +273,7 @@
             "title": "Draw Your First Shape",
             "description": "Use the toolbar to select a shape tool, then click and drag on the canvas to draw.\n\n**Tip:** Use rectangles to represent containers, cards, and buttons.",
             "media": {
-              "markdown": "## ✏️ Drawing Basics\n\n1. **Select a tool** from the toolbar (Rectangle, Circle, Line, Text)\n2. **Click and drag** on the canvas to draw\n3. **Click a shape** to select it\n4. **Drag handles** to resize selected shapes\n5. **Double-click text** to edit content"
+              "markdown": "media/walkthrough/draw-shapes.md"
             }
           },
           {
@@ -281,7 +281,7 @@
             "title": "Use with GitHub Copilot",
             "description": "In Copilot Chat, the AI can request a sketch from you when you're discussing UI designs.\n\nYou can also type ``@kazo_sketch`` to proactively share a design.",
             "media": {
-              "markdown": "## 🤖 AI Integration\n\nKazo Design integrates seamlessly with GitHub Copilot:\n\n### AI Requests Sketch\nWhen discussing UI, Copilot may ask you to sketch your idea.\n\n### You Initiate\nType `@kazo_sketch` in Copilot Chat to share a design.\n\n### Rich Output\nYour sketch is converted to SVG and JSON that the AI can understand."
+              "markdown": "media/walkthrough/use-with-copilot.md"
             }
           },
           {
@@ -289,7 +289,7 @@
             "title": "Available AI Tools",
             "description": "Kazo Design provides several tools for AI interaction:\n\n- **@kazo_sketch** - Create visual designs\n- **@kazo_select** - Choose from options\n- **@kazo_text** - Enter custom text\n- **@kazo_file** - Select files\n- **@kazo_confirm** - Yes/No decisions",
             "media": {
-              "markdown": "## 🛠️ Tool Reference\n\n| Tool | Description |\n|------|-------------|\n| `@kazo_sketch` | Draw a visual sketch |\n| `@kazo_select` | Pick from a list |\n| `@kazo_text` | Enter free text |\n| `@kazo_file` | Browse for files |\n| `@kazo_confirm` | Confirm an action |\n| `@kazo_capabilities` | See all features |"
+              "markdown": "media/walkthrough/tools.md"
             }
           },
           {
@@ -297,7 +297,7 @@
             "title": "Create a New Design",
             "description": "Start fresh with a new design canvas.\n\n[Create New Design](command:kazoDesign.newDesign)",
             "media": {
-              "markdown": "## 🆕 Ready to Create?\n\nClick the button above to open a fresh canvas and start designing!\n\n**Ideas to try:**\n- Sketch a login form\n- Draw a navigation bar\n- Design a card layout\n- Create a dashboard wireframe"
+              "markdown": "media/walkthrough/create-new.md"
             },
             "completionEvents": [
               "onCommand:kazoDesign.newDesign"
