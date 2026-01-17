@@ -86,6 +86,16 @@
     </style>
 </head>
 <body class="bg-kazo-darker text-white font-sans antialiased">
+    <!-- Language Switcher -->
+    <div class="fixed top-4 right-4 z-50">
+        <button id="langSwitcher" onclick="toggleLanguage()" class="bg-kazo-gray hover:bg-kazo-light-gray border border-kazo-light-gray/50 text-gray-300 hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 shadow-lg">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
+            </svg>
+            <span id="langSwitcherText">Afficher en Français</span>
+        </button>
+    </div>
+
     <!-- Hero Section -->
     <header class="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 relative overflow-hidden">
         <!-- Background decoration -->
@@ -378,7 +388,8 @@
                 tech_title: "Built With Modern Technology",
                 cta_title: "Ready to Transform Your Workflow?",
                 cta_subtitle: "Available now on the VS Code Marketplace.",
-                copyright: "© 2025 Kazo Design MCP. All rights reserved."
+                copyright: "© 2025 Kazo Design MCP. All rights reserved.",
+                langSwitcher: "Afficher en Français"
             },
             fr: {
                 title: "Kazo Design MCP",
@@ -406,16 +417,25 @@
                 tech_title: "Construit avec des Technologies Modernes",
                 cta_title: "Prêt à Transformer Votre Workflow ?",
                 cta_subtitle: "Disponible maintenant sur le Marketplace VS Code.",
-                copyright: "© 2025 Kazo Design MCP. Tous droits réservés."
+                copyright: "© 2025 Kazo Design MCP. Tous droits réservés.",
+                langSwitcher: "Display in English"
             }
         };
 
+        let currentLang = 'en';
+
         function detectLanguage() {
+            // Check localStorage first
+            const savedLang = localStorage.getItem('kazo-lang');
+            if (savedLang) return savedLang;
+            
+            // Then check browser language
             const browserLang = navigator.language || navigator.userLanguage;
             return browserLang.startsWith('fr') ? 'fr' : 'en';
         }
 
         function applyTranslations(lang) {
+            currentLang = lang;
             const t = translations[lang] || translations.en;
             document.querySelectorAll('[data-i18n]').forEach(element => {
                 const key = element.getAttribute('data-i18n');
@@ -424,10 +444,25 @@
                 }
             });
             document.documentElement.lang = lang;
+            
+            // Update language switcher button text
+            const switcherText = document.getElementById('langSwitcherText');
+            if (switcherText) {
+                switcherText.textContent = t.langSwitcher;
+            }
+            
             // Update page title
             document.title = lang === 'fr' 
                 ? "Kazo Design MCP - Outil de communication visuelle pour assistants IA"
                 : "Kazo Design MCP - Visual Communication Tool for AI Assistants";
+            
+            // Save preference
+            localStorage.setItem('kazo-lang', lang);
+        }
+
+        function toggleLanguage() {
+            const newLang = currentLang === 'en' ? 'fr' : 'en';
+            applyTranslations(newLang);
         }
 
         // Apply translations on page load
