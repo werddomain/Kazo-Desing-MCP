@@ -5,6 +5,18 @@ All notable changes to Kazo Design MCP will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] - 2026-01-16
+
+### Added
+- **Getting Started Walkthrough**: New interactive walkthrough in VS Code to help users learn Kazo Design
+  - Introduction to visual communication for AI
+  - Step-by-step guide to using the design editor
+  - Tutorial on drawing shapes and using tools
+  - Guide for GitHub Copilot integration
+  - Reference for all available AI tools
+
+
+
 ## [1.0.1] - 2026-01-13
 
 ### Added
@@ -61,5 +73,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - TypeScript extension for VS Code integration
 - Model Context Protocol (MCP) support for AI assistant communication
 
+[1.0.2]: https://github.com/werddomain/Kazo-Desing-MCP/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/werddomain/Kazo-Desing-MCP/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/werddomain/Kazo-Desing-MCP/releases/tag/v1.0.0
