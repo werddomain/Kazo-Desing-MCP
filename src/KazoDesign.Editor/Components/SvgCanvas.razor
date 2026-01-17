@@ -170,7 +170,8 @@
                     Y = y,
                     Width = 0,
                     Height = 0,
-                    Description = "New rectangle"
+                    Description = "New rectangle",
+                    Parent = DesignService.CurrentViewContext
                 };
                 Document.Elements.Add(_drawingElement);
                 break;
@@ -181,7 +182,8 @@
                     X = x,
                     Y = y,
                     Radius = 0,
-                    Description = "New circle"
+                    Description = "New circle",
+                    Parent = DesignService.CurrentViewContext
                 };
                 Document.Elements.Add(_drawingElement);
                 break;
@@ -193,7 +195,8 @@
                     Y = y,
                     X2 = x,
                     Y2 = y,
-                    Description = "New line"
+                    Description = "New line",
+                    Parent = DesignService.CurrentViewContext
                 };
                 Document.Elements.Add(_drawingElement);
                 break;
